@@ -1,19 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { usePlaces } from '@/contexts/PlacesContext';
-import { FilterBar } from './FilterBar';
 import { PlaceCard } from './PlaceCard';
 import { Place } from '@/types/place';
-import {
-  UtensilsCrossed,
-  Plus,
-  Compass,
-  RotateCcw,
-  Sparkles,
-  MapPin,
-  HelpCircle,
-} from 'lucide-react';
+import { Compass, Plus } from 'lucide-react';
 
 interface SidebarProps {
   onOpenAddModal: () => void;
@@ -25,18 +16,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenDeciderModal,
 }) => {
   const {
-    activeTab,
+    places,
+    rankedPlaces,
+    wantToTryPlaces,
     filteredRankedPlaces,
     filteredWantToTryPlaces,
+    activeTab,
+    setActiveTab,
+    filters,
+    setFilters,
     startComparison,
     deletePlace,
-    resetToLondonMock,
   } = usePlaces();
+
+  // Culinárias disponíveis para os chips superiores
+  const cuisineChips = useMemo(() => {
+    const list = ['All', 'British', 'Spanish', 'Italian', 'European', 'Indian', 'Basque', 'Punjabi', 'Taiwanese'];
+    return list;
+  }, []);
 
   const currentList = activeTab === 'RANKED' ? filteredRankedPlaces : filteredWantToTryPlaces;
 
   const handlePromoteToBeen = (place: Place) => {
-    // Ao promover de WANT_TO_TRY para BEEN, dispara o duelo head-to-head!
     startComparison(place);
   };
 
@@ -45,66 +46,94 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className="w-full h-full flex flex-col bg-slate-900 border-r border-slate-800 text-slate-100 overflow-hidden select-none">
-      {/* Top Header */}
-      <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/70">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-amber-500/20">
-            <UtensilsCrossed className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="font-black text-lg tracking-tight text-white flex items-center gap-1.5">
-              Tastemap
-              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                Londres
-              </span>
-            </h1>
-            <p className="text-[11px] text-slate-400">Ranking Head-to-Head & Mapa</p>
-          </div>
+    <aside className="w-full h-full flex flex-col bg-[#FAFAF8] border-r border-[#EAEAE5] text-[#191917] overflow-hidden select-none">
+      {/* Header Superior da Sidebar fiel ao layout da imagem */}
+      <div className="pt-6 px-6 pb-2 space-y-3 shrink-0">
+        {/* Badge London + Contador */}
+        <div className="flex items-center gap-2 text-xs text-[#71716A]">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-[#E4E4DC] font-medium text-[#2E332E]">
+            <span className="w-2 h-2 rounded-full bg-[#1C4434]"></span>
+            London
+          </span>
+          <span className="font-normal text-[#8A8A80]">
+            {places.length} places • {rankedPlaces.length} ranked
+          </span>
         </div>
 
-        {/* Ações principais */}
-        <div className="flex items-center gap-1.5">
+        {/* Título com Serifa Editorial */}
+        <div>
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-[#141814]">
+            Your top tables
+          </h1>
+          <p className="text-xs text-[#6B7068] mt-1 leading-relaxed max-w-sm">
+            Ranked head-to-head, so your #3 really is better than your #4 — no five-star mush.
+          </p>
+        </div>
+
+        {/* Abas: Ranked X vs Want to try Y */}
+        <div className="flex items-center gap-6 pt-3 border-b border-[#E8E8DF]">
+          <button
+            onClick={() => setActiveTab('RANKED')}
+            className={`pb-2.5 text-sm font-bold transition-all relative flex items-center gap-1.5 ${
+              activeTab === 'RANKED'
+                ? 'text-[#141814] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2.5px] after:bg-[#1C4434]'
+                : 'text-[#8A8A80] hover:text-[#141814]'
+            }`}
+          >
+            <span>Ranked</span>
+            <span className="text-xs font-normal text-[#8A8A80]">{rankedPlaces.length}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('WANT_TO_TRY')}
+            className={`pb-2.5 text-sm font-bold transition-all relative flex items-center gap-1.5 ${
+              activeTab === 'WANT_TO_TRY'
+                ? 'text-[#141814] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2.5px] after:bg-[#1C4434]'
+                : 'text-[#8A8A80] hover:text-[#141814]'
+            }`}
+          >
+            <span>Want to try</span>
+            <span className="text-xs font-normal text-[#8A8A80]">{wantToTryPlaces.length}</span>
+          </button>
+
+          {/* Botão Decisor rápido embutido discretamente */}
           <button
             onClick={onOpenDeciderModal}
-            className="p-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 transition-all"
-            title="Decisor Rápido: Onde vamos comer hoje?"
+            className="ml-auto mb-2 text-xs text-[#1C4434] hover:underline flex items-center gap-1 font-semibold"
+            title="Decisor rápido: onde comer hoje?"
           >
-            <Compass className="w-4 h-4" />
+            <Compass className="w-3.5 h-3.5" />
+            <span>Decisor Rápido</span>
           </button>
+        </div>
 
-          <button
-            onClick={resetToLondonMock}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-all"
-            title="Restaurar dados de demonstração de Londres"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
-
-          <button
-            onClick={onOpenAddModal}
-            className="py-1.5 px-3 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 shadow-md shadow-amber-500/20 transition-all flex items-center gap-1"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Adicionar</span>
-          </button>
+        {/* Chips de Culinária em Carrossel Horizontal */}
+        <div className="flex items-center gap-1.5 overflow-x-auto py-2 no-scrollbar">
+          {cuisineChips.map((c) => {
+            const isSelected = (c === 'All' && !filters.cuisine) || filters.cuisine === c;
+            return (
+              <button
+                key={c}
+                onClick={() => setFilters((prev) => ({ ...prev, cuisine: c === 'All' ? '' : c }))}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                  isSelected
+                    ? 'bg-[#1C4434] text-white shadow-sm'
+                    : 'bg-[#EFEFEA] hover:bg-[#E5E5DE] text-[#434842]'
+                }`}
+              >
+                {c}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Barra de Filtros e Abas */}
-      <FilterBar />
-
-      {/* Listagem de Restaurantes com Rolagem Independente */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      {/* Listagem de Cards de Restaurante com Rolagem Suave */}
+      <div className="flex-1 overflow-y-auto px-6 py-2 space-y-2.5">
         {currentList.length === 0 ? (
-          <div className="py-16 text-center text-slate-400 space-y-3">
-            <div className="w-12 h-12 rounded-full bg-slate-800 mx-auto flex items-center justify-center text-slate-500">
-              <MapPin className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-sm text-slate-300">Nenhum restaurante encontrado</h3>
-            <p className="text-xs text-slate-500 max-w-xs mx-auto">
-              Tente ajustar seus termos de busca ou filtros selecionados acima.
-            </p>
+          <div className="py-16 text-center text-[#8A8A80] space-y-2">
+            <p className="text-sm font-semibold text-[#454A44]">No places found</p>
+            <p className="text-xs">Adjust your search or category filters above.</p>
           </div>
         ) : (
           currentList.map((place, index) => (
@@ -118,14 +147,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             />
           ))
         )}
-      </div>
-
-      {/* Barra inferior informativa */}
-      <div className="px-4 py-2 bg-slate-950 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-        <span>{currentList.length} locais listados</span>
-        <span className="flex items-center gap-1 text-slate-400">
-          <Sparkles className="w-3 h-3 text-amber-400" /> Posição fracionária $O(1)$
-        </span>
       </div>
     </aside>
   );

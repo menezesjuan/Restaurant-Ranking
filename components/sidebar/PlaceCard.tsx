@@ -3,16 +3,7 @@
 import React from 'react';
 import { Place } from '@/types/place';
 import { useMapSelection } from '@/contexts/MapSelectionContext';
-import {
-  MapPin,
-  Trophy,
-  Bookmark,
-  Swords,
-  Trash2,
-  Tag,
-  CheckCircle,
-  Sparkles,
-} from 'lucide-react';
+import { Swords, Trash2, Bookmark } from 'lucide-react';
 
 interface PlaceCardProps {
   place: Place;
@@ -31,37 +22,25 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
 }) => {
   const { selectedPlaceId, selectPlaceFromList, setHoveredPlaceId } = useMapSelection();
   const isSelected = selectedPlaceId === place.id;
-  const isBeen = place.status === 'BEEN';
+  const isTopPick = rankNumber === 1;
 
-  // Badge do ranking com estilo especial para top 3
-  const renderRankBadge = () => {
-    if (!rankNumber) return null;
+  // Renderiza indicador de preço formatado como £ £ £ com opacidade
+  const renderPriceIndicator = (price: string) => {
+    const symbol = price.includes('$') ? '$' : '£';
+    const tierCount = price.length || 2;
+    const maxTiers = 4;
 
-    if (rankNumber === 1) {
-      return (
-        <span className="flex items-center gap-1 px-2.5 py-1 rounded-xl font-black text-xs bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 shadow-md shadow-amber-500/20">
-          <Trophy className="w-3.5 h-3.5" /> #1 Top Escolha
-        </span>
-      );
-    }
-    if (rankNumber === 2) {
-      return (
-        <span className="flex items-center gap-1 px-2.5 py-1 rounded-xl font-black text-xs bg-gradient-to-r from-slate-300 to-slate-400 text-slate-950 shadow-sm">
-          #2 Prata
-        </span>
-      );
-    }
-    if (rankNumber === 3) {
-      return (
-        <span className="flex items-center gap-1 px-2.5 py-1 rounded-xl font-black text-xs bg-gradient-to-r from-amber-700 to-orange-700 text-white shadow-sm">
-          #3 Bronze
-        </span>
-      );
-    }
     return (
-      <span className="px-2 py-0.5 rounded-lg font-bold text-xs bg-slate-800 text-slate-300 border border-slate-700">
-        #{rankNumber}
-      </span>
+      <div className="flex items-center gap-0.5 text-xs font-semibold select-none">
+        {Array.from({ length: maxTiers }).map((_, i) => (
+          <span
+            key={i}
+            className={i < tierCount ? 'text-[#3E423D]' : 'text-[#D0D4CF]'}
+          >
+            {symbol}
+          </span>
+        ))}
+      </div>
     );
   };
 
@@ -71,102 +50,95 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
       onClick={() => selectPlaceFromList(place)}
       onMouseEnter={() => setHoveredPlaceId(place.id)}
       onMouseLeave={() => setHoveredPlaceId(null)}
-      className={`group relative p-4 rounded-2xl border transition-all duration-200 cursor-pointer text-left ${
-        isSelected
-          ? 'bg-slate-800/95 border-amber-500 ring-2 ring-amber-500/50 shadow-xl shadow-amber-500/10 scale-[1.01]'
-          : 'bg-slate-800/60 hover:bg-slate-800/90 border-slate-700/80 hover:border-slate-600 shadow-md'
+      className={`group relative flex items-center justify-between p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer ${
+        isTopPick
+          ? 'bg-[#FBF6EB] border-[#EFE5D0] shadow-sm'
+          : isSelected
+          ? 'bg-white border-[#1C4434] ring-2 ring-[#1C4434]/20 shadow-md'
+          : 'bg-white hover:bg-[#F8F8F5] border-[#EAEAE5]'
       }`}
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2">
-          {isBeen ? (
-            renderRankBadge()
-          ) : (
-            <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold bg-cyan-950/80 text-cyan-300 border border-cyan-800">
-              <Bookmark className="w-3 h-3" /> Quero Conhecer
-            </span>
-          )}
-          <span className="text-xs font-bold text-slate-400 bg-slate-900/60 px-2 py-0.5 rounded border border-slate-700/60">
-            {place.priceRange}
+      {/* Lado Esquerdo: Número do Ranking + Avatar + Informações */}
+      <div className="flex items-center gap-3.5 min-w-0">
+        {/* Número do Ranking */}
+        {rankNumber ? (
+          <span className="font-serif text-lg font-bold text-[#1C4434] w-5 text-center shrink-0">
+            {rankNumber}
           </span>
+        ) : (
+          <Bookmark className="w-4 h-4 text-[#C88A35] shrink-0 ml-1" />
+        )}
+
+        {/* Avatar / Logo estilizado do Restaurante */}
+        <div
+          className="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-white text-xs shrink-0 shadow-sm overflow-hidden"
+          style={{ backgroundColor: place.avatarBg || '#24342F' }}
+        >
+          {place.avatarText || place.name.substring(0, 2).toUpperCase()}
         </div>
 
-        {/* Culinária */}
-        <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300">
-          {place.cuisine}
-        </span>
-      </div>
-
-      {/* Nome e Endereço */}
-      <div>
-        <h3 className="font-bold text-base text-white group-hover:text-amber-300 transition-colors">
-          {place.name}
-        </h3>
-        <p className="text-xs text-slate-400 mt-1 flex items-center gap-1 line-clamp-1">
-          <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-          <span className="truncate">{place.address}</span>
-        </p>
-      </div>
-
-      {/* Notas */}
-      {place.notes && (
-        <p className="text-xs text-slate-300 italic mt-2.5 bg-slate-900/50 p-2 rounded-xl border border-slate-800/80 line-clamp-2">
-          &quot;{place.notes}&quot;
-        </p>
-      )}
-
-      {/* Tags */}
-      {place.tags && place.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2.5">
-          {place.tags.slice(0, 4).map((tag) => (
-            <span
-              key={tag}
-              className="text-[10px] px-2 py-0.5 rounded-full bg-slate-900 text-slate-400 border border-slate-800"
-            >
-              {tag}
+        {/* Informações: Nome, Culinária e Bairro/Visitas */}
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="font-bold text-sm text-[#181816] truncate group-hover:text-[#1C4434] transition-colors">
+              {place.name}
+            </h3>
+            <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#ECECE6] text-[#555A54] shrink-0">
+              {place.cuisine}
             </span>
-          ))}
-          {place.tags.length > 4 && (
-            <span className="text-[10px] text-slate-500 px-1">+{place.tags.length - 4}</span>
-          )}
+          </div>
+
+          <p className="text-xs text-[#71716A] truncate mt-0.5">
+            {place.neighborhood || place.address.split(',')[0]}
+            {typeof place.timesVisited === 'number' && place.timesVisited > 0 && (
+              <span> • been {place.timesVisited}x</span>
+            )}
+          </p>
         </div>
-      )}
+      </div>
 
-      {/* Ações contextuais */}
-      <div className="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center justify-between">
-        <span className="text-[11px] text-slate-500 group-hover:text-slate-400 transition-colors">
-          Clique para ver no mapa
-        </span>
+      {/* Lado Direito: Preço e Tag TOP PICK */}
+      <div className="flex flex-col items-end gap-1 shrink-0 ml-3">
+        {renderPriceIndicator(place.priceRange)}
 
-        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-          {!isBeen && onPromoteToBeen && (
+        {isTopPick && (
+          <span className="text-[10px] font-black tracking-wider text-[#C88A35] uppercase">
+            TOP PICK
+          </span>
+        )}
+
+        {/* Ações contextuais em hover */}
+        <div
+          className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity pt-0.5"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {place.status === 'WANT_TO_TRY' && onPromoteToBeen && (
             <button
               onClick={() => onPromoteToBeen(place)}
-              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center gap-1 shadow-sm transition-colors"
-              title="Marcar como visitado e disputar duelo de ranking"
+              className="px-2 py-0.5 rounded bg-[#1C4434] text-white text-[10px] font-medium"
+              title="Disputar duelo de ranking"
             >
-              <Swords className="w-3 h-3" />
-              <span>Experimentei</span>
+              Duelo
             </button>
           )}
 
-          {isBeen && onRerank && (
+          {place.status === 'BEEN' && onRerank && (
             <button
               onClick={() => onRerank(place)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-amber-300 hover:bg-slate-700 transition-colors"
-              title="Refazer comparações head-to-head para este restaurante"
+              className="p-1 rounded text-[#71716A] hover:text-[#1C4434]"
+              title="Re-ranquear restaurante"
             >
-              <Swords className="w-3.5 h-3.5" />
+              <Swords className="w-3 h-3" />
             </button>
           )}
 
           {onDelete && (
             <button
               onClick={() => onDelete(place.id)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-700 transition-colors"
-              title="Remover restaurante"
+              className="p-1 rounded text-[#71716A] hover:text-rose-600"
+              title="Remover"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="w-3 h-3" />
             </button>
           )}
         </div>

@@ -1,7 +1,7 @@
 import { Place } from '@/types/place';
 import initialLondonPlaces from '@/data/london-mock-places.json';
 
-const STORAGE_KEY = 'tastemap_places_v1';
+const STORAGE_KEY = 'tastemap_places_v2';
 
 export class PlacesStorageService {
   /**

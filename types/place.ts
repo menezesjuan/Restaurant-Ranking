@@ -5,14 +5,18 @@ export interface Place {
   userId?: string;
   name: string;
   address: string;
+  neighborhood?: string;
   latitude: number;
   longitude: number;
   cuisine: string;
-  priceRange: '$' | '$$' | '$$$' | '$$$$' | string;
+  priceRange: '£' | '££' | '£££' | '££££' | '$' | '$$' | '$$$' | '$$$$' | string;
   status: PlaceStatus;
   rankingPosition: number | null;
   notes?: string | null;
   tags: string[];
+  timesVisited?: number;
+  avatarText?: string;
+  avatarBg?: string;
   createdAt?: string | Date;
   updatedAt?: string | Date;
 }

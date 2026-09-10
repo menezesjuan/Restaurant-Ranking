@@ -1,56 +1,60 @@
 @import "tailwindcss";
 
 :root {
-  --background: #090d16;
-  --foreground: #f8fafc;
+  --background: #fafaf8;
+  --foreground: #191917;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow: hidden;
 }
 
-/* Custom scrollbar para visual limpo e refinado */
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+/* Scrollbar sutil e minimalista */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.8);
+  background: #d8d8d0;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 1);
+  background: #bcbcb2;
 }
 
-/* Leaflet container fixes */
+/* Leaflet container */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background-color: #0f172a;
+  background-color: #f4f3f0;
   font-family: inherit;
 }
 
-/* Custom styling para os popups do Leaflet */
+/* Custom styling para os popups do Leaflet no tema claro */
 .leaflet-popup-content-wrapper {
-  background: #0f172a !important;
-  color: #f8fafc !important;
-  border-radius: 1rem !important;
-  border: 1px solid rgba(51, 65, 85, 0.8) !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
+  background: #ffffff !important;
+  color: #191917 !important;
+  border-radius: 12px !important;
+  border: 1px solid #e7e7e0 !important;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04) !important;
   padding: 0 !important;
 }
 
 .leaflet-popup-tip {
-  background: #0f172a !important;
+  background: #ffffff !important;
 }
 
 .leaflet-popup-content {
@@ -63,12 +67,13 @@ body {
 }
 
 .leaflet-container a.leaflet-popup-close-button {
-  color: #94a3b8 !important;
+  color: #888880 !important;
   top: 10px !important;
   right: 10px !important;
-  padding: 4px !important;
 }
 
-.leaflet-container a.leaflet-popup-close-button:hover {
-  color: #f8fafc !important;
+/* Custom pin style */
+.custom-pin-marker {
+  background: transparent;
+  border: none;
 }

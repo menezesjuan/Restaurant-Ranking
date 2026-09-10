@@ -23,17 +23,14 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
 
   const handleFinish = (result: ComparisonResult) => {
     setCompletedResult(result);
-    // Dispara celebração festiva com confete
     try {
       confetti({
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#f59e0b', '#ef4444', '#10b981', '#3b82f6'],
+        colors: ['#1C4434', '#C88A35', '#EFEFEA', '#141814'],
       });
-    } catch {
-      // Confetti fallback
-    }
+    } catch {}
 
     setTimeout(() => {
       onComplete({ newPosition: result.newPosition });
@@ -54,7 +51,6 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
     onCancel,
   });
 
-  // Atalhos de teclado: Seta Esquerda = Candidato, Seta Direita = Adversário
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft' || e.key === '1') {
@@ -72,194 +68,165 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
   if (!candidate) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/60 rounded-2xl shadow-2xl overflow-hidden text-slate-100 flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl bg-[#FAFAF8] border border-[#EAEAE5] rounded-3xl shadow-2xl overflow-hidden text-[#191917] flex flex-col max-h-[90vh]">
         {/* Header do Duelo */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 sticky top-0 z-10">
+        <div className="px-6 py-4 border-b border-[#EAEAE5] flex items-center justify-between bg-white sticky top-0 z-10">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-              <Swords className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-full bg-[#1C4434] text-white flex items-center justify-center shadow-sm">
+              <Swords className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                Duelo Head-to-Head
-                <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Posicionando no Ranking
+              <h2 className="font-serif text-xl font-bold tracking-tight text-[#141814] flex items-center gap-2">
+                Head-to-Head Duel
+                <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#EFF5F1] text-[#1C4434] border border-[#D2E2D6]">
+                  Finding Exact Rank
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">
-                Qual restaurante proporcionou a melhor experiência gastronômica?
+              <p className="text-xs text-[#71716A]">
+                Which table gave you the better culinary experience?
               </p>
             </div>
           </div>
 
           <button
             onClick={onCancel}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-            title="Cancelar e fechar"
+            className="p-1.5 rounded-lg text-[#71716A] hover:text-[#141814] hover:bg-[#EAEAE5] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Barra de Progresso com Estimativa O(log n) */}
-        <div className="px-6 py-2.5 bg-slate-800/40 border-b border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
+        {/* Barra de Progresso O(log n) */}
+        <div className="px-6 py-2.5 bg-[#F4F4F0] border-b border-[#EAEAE5] flex items-center justify-between text-xs text-[#71716A]">
           <div className="flex items-center gap-2 font-medium">
-            <span>Rodada {currentRound}</span>
-            <span className="text-slate-600">•</span>
-            <span>Estimativa máxima: {estimatedTotalSteps} comparações</span>
+            <span>Round {currentRound}</span>
+            <span>•</span>
+            <span>Binary Search: ~{estimatedTotalSteps} questions max</span>
           </div>
-          <div className="w-36 bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700">
+          <div className="w-36 bg-[#E0E0D8] rounded-full h-2 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-amber-500 to-orange-500 h-full transition-all duration-300 rounded-full"
-              style={{ width: `${Math.max(10, progressPercentage)}%` }}
+              className="bg-[#1C4434] h-full transition-all duration-300 rounded-full"
+              style={{ width: `${Math.max(12, progressPercentage)}%` }}
             />
           </div>
         </div>
 
-        {/* Área de Conteúdo / Cards de Duelo */}
+        {/* Área de Duelo */}
         <div className="p-6 overflow-y-auto flex-1 flex flex-col justify-center">
           {completedResult ? (
             <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 animate-in zoom-in-95 duration-300">
-              <div className="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mb-2">
-                <CheckCircle2 className="w-10 h-10" />
+              <div className="w-16 h-16 rounded-full bg-[#EFF5F1] border-2 border-[#1C4434] flex items-center justify-center text-[#1C4434] mb-2 shadow-sm">
+                <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-bold text-white">Posição Definida com Sucesso!</h3>
-              <p className="text-slate-300 max-w-md text-sm">
-                <span className="font-semibold text-amber-400">{candidate.name}</span> foi
-                posicionado no índice #{completedResult.insertIndex + 1} do seu ranking com{' '}
-                {completedResult.totalComparisonsDone} comparações.
+              <h3 className="font-serif text-2xl font-bold text-[#141814]">Ranking Position Found!</h3>
+              <p className="text-[#555A54] max-w-md text-sm">
+                <span className="font-bold text-[#1C4434]">{candidate.name}</span> has been positioned at{' '}
+                <span className="font-bold">#{completedResult.insertIndex + 1}</span> on your table list with{' '}
+                {completedResult.totalComparisonsDone} comparisons.
               </p>
               {completedResult.needsRebalance && (
-                <span className="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" /> Rebalanceamento fracionário automático aplicado
+                <span className="text-xs bg-[#EFF5F1] text-[#1C4434] px-3 py-1 rounded-full border border-[#D2E2D6] flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5" /> Fractional index rebalanced automatically
                 </span>
               )}
             </div>
           ) : currentOpponent ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
               {/* Card Esquerdo: Candidato */}
-              <div className="group relative flex flex-col justify-between p-6 rounded-2xl bg-gradient-to-b from-slate-800/90 to-slate-800/40 border-2 border-amber-500/40 hover:border-amber-400 transition-all duration-200 shadow-lg hover:shadow-amber-500/10">
+              <div className="group relative flex flex-col justify-between p-6 rounded-2xl bg-white border-2 border-[#1C4434]/40 hover:border-[#1C4434] transition-all duration-200 shadow-md">
                 <div className="space-y-4">
                   <div className="flex items-start justify-between gap-2">
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" /> NOVO NO RANKING
+                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#1C4434] text-white flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" /> NEW ENTRY
                     </span>
-                    <span className="text-xs font-medium text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800">
+                    <span className="text-xs font-bold text-[#555A54] bg-[#F4F4F0] px-2 py-0.5 rounded border border-[#EAEAE5]">
                       {candidate.priceRange}
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
+                    <h3 className="font-serif text-2xl font-bold text-[#141814]">
                       {candidate.name}
                     </h3>
-                    <p className="text-sm text-slate-400 flex items-center gap-1 mt-1">
-                      <MapPin className="w-3.5 h-3.5 text-slate-500" />
+                    <p className="text-xs text-[#71716A] flex items-center gap-1 mt-1">
+                      <MapPin className="w-3.5 h-3.5 text-[#1C4434]" />
                       <span className="truncate">{candidate.address}</span>
                     </p>
                   </div>
 
-                  <div className="inline-block px-2.5 py-1 rounded-md bg-slate-700/60 text-slate-300 text-xs font-medium">
+                  <div className="inline-block px-2.5 py-1 rounded-md bg-[#ECECE6] text-[#434842] text-xs font-semibold uppercase">
                     {candidate.cuisine}
                   </div>
 
                   {candidate.notes && (
-                    <p className="text-xs text-slate-300 italic bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                    <p className="text-xs text-[#555A54] italic bg-[#FAF9F5] p-3 rounded-xl border border-[#EAEAE5]">
                       &quot;{candidate.notes}&quot;
                     </p>
-                  )}
-
-                  {candidate.tags && candidate.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-2">
-                      {candidate.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1"
-                        >
-                          <Tag className="w-2.5 h-2.5 text-slate-500" />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
                   )}
                 </div>
 
                 <div className="pt-6">
                   <button
                     onClick={voteCandidate}
-                    className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group-hover:ring-2 ring-amber-300"
+                    className="w-full py-3.5 px-4 rounded-full font-bold text-sm bg-[#1C4434] hover:bg-[#153629] text-white shadow-md shadow-[#1C4434]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                   >
                     <Trophy className="w-4 h-4" />
-                    <span>Este Foi Melhor</span>
-                    <span className="text-[11px] opacity-75 font-mono ml-1 px-1.5 py-0.5 rounded bg-slate-900/20">
-                      [ ← ou 1 ]
+                    <span>This was better</span>
+                    <span className="text-[11px] opacity-75 font-mono ml-1 px-1.5 py-0.5 rounded bg-black/20">
+                      [ ← or 1 ]
                     </span>
                   </button>
                 </div>
               </div>
 
-              {/* Divisor VS no Desktop */}
-              <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-950 border-2 border-slate-700 items-center justify-center font-black text-xs text-slate-300 shadow-xl z-10">
+              {/* Divisor VS */}
+              <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white border-2 border-[#EAEAE5] items-center justify-center font-black text-xs text-[#71716A] shadow-md z-10">
                 VS
               </div>
 
-              {/* Card Direito: Adversário Atual */}
-              <div className="group relative flex flex-col justify-between p-6 rounded-2xl bg-gradient-to-b from-slate-800/90 to-slate-800/40 border border-slate-700 hover:border-slate-500 transition-all duration-200 shadow-lg">
+              {/* Card Direito: Oponente */}
+              <div className="group relative flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#EAEAE5] hover:border-[#B0B0A8] transition-all duration-200 shadow-md">
                 <div className="space-y-4">
                   <div className="flex items-start justify-between gap-2">
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-700 text-slate-200 flex items-center gap-1">
-                      <Trophy className="w-3 h-3 text-amber-400" /> JÁ RANQUEADO
+                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#EAEAE5] text-[#434842] flex items-center gap-1">
+                      <Trophy className="w-3 h-3 text-[#C88A35]" /> CURRENT BENCHMARK
                     </span>
-                    <span className="text-xs font-medium text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                    <span className="text-xs font-bold text-[#555A54] bg-[#F4F4F0] px-2 py-0.5 rounded border border-[#EAEAE5]">
                       {currentOpponent.priceRange}
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
+                    <h3 className="font-serif text-2xl font-bold text-[#141814]">
                       {currentOpponent.name}
                     </h3>
-                    <p className="text-sm text-slate-400 flex items-center gap-1 mt-1">
-                      <MapPin className="w-3.5 h-3.5 text-slate-500" />
+                    <p className="text-xs text-[#71716A] flex items-center gap-1 mt-1">
+                      <MapPin className="w-3.5 h-3.5 text-[#1C4434]" />
                       <span className="truncate">{currentOpponent.address}</span>
                     </p>
                   </div>
 
-                  <div className="inline-block px-2.5 py-1 rounded-md bg-slate-700/60 text-slate-300 text-xs font-medium">
+                  <div className="inline-block px-2.5 py-1 rounded-md bg-[#ECECE6] text-[#434842] text-xs font-semibold uppercase">
                     {currentOpponent.cuisine}
                   </div>
 
                   {currentOpponent.notes && (
-                    <p className="text-xs text-slate-300 italic bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                    <p className="text-xs text-[#555A54] italic bg-[#FAF9F5] p-3 rounded-xl border border-[#EAEAE5]">
                       &quot;{currentOpponent.notes}&quot;
                     </p>
-                  )}
-
-                  {currentOpponent.tags && currentOpponent.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-2">
-                      {currentOpponent.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1"
-                        >
-                          <Tag className="w-2.5 h-2.5 text-slate-500" />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
                   )}
                 </div>
 
                 <div className="pt-6">
                   <button
                     onClick={voteOpponent}
-                    className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-slate-700 hover:bg-slate-600 text-white shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 group-hover:ring-2 ring-slate-400"
+                    className="w-full py-3.5 px-4 rounded-full font-bold text-sm bg-[#EFEFEA] hover:bg-[#E2E2DC] text-[#141814] shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-[#D5D5CD]"
                   >
-                    <Trophy className="w-4 h-4 text-amber-400" />
-                    <span>Este Foi Melhor</span>
-                    <span className="text-[11px] opacity-75 font-mono ml-1 px-1.5 py-0.5 rounded bg-slate-900/40">
-                      [ → ou 2 ]
+                    <Trophy className="w-4 h-4 text-[#C88A35]" />
+                    <span>This was better</span>
+                    <span className="text-[11px] opacity-75 font-mono ml-1 px-1.5 py-0.5 rounded bg-black/10">
+                      [ → or 2 ]
                     </span>
                   </button>
                 </div>
@@ -268,14 +235,14 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
           ) : null}
         </div>
 
-        {/* Rodapé informativo */}
-        <div className="px-6 py-3 bg-slate-950/60 border-t border-slate-800 text-center text-xs text-slate-500 flex items-center justify-center gap-4">
+        {/* Footer */}
+        <div className="px-6 py-3 bg-[#F4F4F0] border-t border-[#EAEAE5] text-center text-xs text-[#71716A] flex items-center justify-center gap-4">
           <span className="flex items-center gap-1">
-            <ArrowLeft className="w-3.5 h-3.5 text-slate-400" /> Seta Esquerda ou 1: Votar na esquerda
+            <ArrowLeft className="w-3.5 h-3.5" /> Left Arrow or 1: Vote Left
           </span>
-          <span className="text-slate-700">•</span>
+          <span>•</span>
           <span className="flex items-center gap-1">
-            Seta Direita ou 2: Votar na direita <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+            Right Arrow or 2: Vote Right <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>
       </div>
