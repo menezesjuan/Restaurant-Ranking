@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "test:ranking": "npx tsx test/ranking-calc.test.ts"
+    "test:ranking": "npx tsx test/ranking-calc.test.ts",
+    "test": "npx tsx test/run-all.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

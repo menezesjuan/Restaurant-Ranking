@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Moon, Sun, RotateCcw, Plus, X } from 'lucide-react';
+import { Search, Moon, Sun, RotateCcw, Plus, X, Download } from 'lucide-react';
 import { usePlaces } from '@/contexts/PlacesContext';
 
 interface TopNavbarProps {
   onOpenAddModal: () => void;
+  onOpenBackupModal: () => void;
 }
 
-export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal }) => {
+export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal, onOpenBackupModal }) => {
   const { filters, setFilters, resetToLondonMock } = usePlaces();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -48,9 +49,9 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal }) => {
       </div>
 
       {/* Ações da direita */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
         {/* Campo de Busca */}
-        <div className="relative w-56 sm:w-72">
+        <div className="relative w-48 sm:w-64">
           <input
             type="text"
             placeholder="Search your places"
@@ -81,6 +82,15 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal }) => {
           ) : (
             <Moon className="w-4 h-4" />
           )}
+        </button>
+
+        {/* Botão Exportar / Importar Backup */}
+        <button
+          onClick={onOpenBackupModal}
+          className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#555A54] dark:text-[#B5BDB3] transition-colors"
+          title="Backup & Compartilhar Rankings"
+        >
+          <Download className="w-4 h-4" />
         </button>
 
         {/* Botão Resetar Lugares */}

@@ -21,6 +21,7 @@ interface PlacesContextValue {
   updatePlace: (id: string, updates: Partial<Place>) => void;
   deletePlace: (id: string) => void;
   resetToLondonMock: () => void;
+  importPlaces: (imported: Place[]) => void;
   // Comparação Head-to-Head
   comparisonCandidate: Place | null;
   startComparison: (place: Place) => void;
@@ -215,6 +216,12 @@ export const PlacesProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setComparisonCandidate(null);
   }, []);
 
+  const importPlaces = useCallback((imported: Place[]) => {
+    PlacesStorageService.saveLocalPlaces(imported);
+    setPlaces(imported);
+    checkAndExecuteRebalance(imported);
+  }, [checkAndExecuteRebalance]);
+
   return (
     <PlacesContext.Provider
       value={{
@@ -233,6 +240,7 @@ export const PlacesProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         updatePlace,
         deletePlace,
         resetToLondonMock,
+        importPlaces,
         comparisonCandidate,
         startComparison,
         finishComparison,

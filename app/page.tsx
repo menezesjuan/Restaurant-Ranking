@@ -10,6 +10,7 @@ import { ComparisonModal } from '@/components/modals/ComparisonModal';
 import { DeciderModal } from '@/components/modals/DeciderModal';
 import { AddPlaceModal } from '@/components/modals/AddPlaceModal';
 import { PlaceDetailModal } from '@/components/modals/PlaceDetailModal';
+import { BackupModal } from '@/components/modals/BackupModal';
 import { Place } from '@/types/place';
 import { List, Map as MapIcon, X, MapPin, Swords, Eye } from 'lucide-react';
 
@@ -27,6 +28,7 @@ function TastemapApp() {
     updatePlace,
     deletePlace,
     startComparison,
+    importPlaces,
   } = usePlaces();
 
   const { selectedPlaceId, selectPlaceFromList, clearSelection } = useMapSelection();
@@ -34,6 +36,7 @@ function TastemapApp() {
   const [mobileView, setMobileView] = useState<'LIST' | 'MAP'>('LIST');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeciderOpen, setIsDeciderOpen] = useState(false);
+  const [isBackupOpen, setIsBackupOpen] = useState(false);
   const [inspectingPlace, setInspectingPlace] = useState<Place | null>(null);
 
   // Restaurante selecionado para o bottom sheet mobile ou detalhes
@@ -58,7 +61,10 @@ function TastemapApp() {
   return (
     <div className="w-screen h-screen flex flex-col overflow-hidden bg-[#FAFAF8] dark:bg-[#0D110F] text-[#191917] dark:text-[#F0F2EE]">
       {/* Barra de Navegação Superior Completa (TopNavbar) */}
-      <TopNavbar onOpenAddModal={() => setIsAddModalOpen(true)} />
+      <TopNavbar
+        onOpenAddModal={() => setIsAddModalOpen(true)}
+        onOpenBackupModal={() => setIsBackupOpen(true)}
+      />
 
       {/* Split-Screen Principal */}
       <div className="flex-1 w-full flex flex-col md:flex-row overflow-hidden relative">
@@ -201,6 +207,14 @@ function TastemapApp() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSavePlace={handleSaveNewPlace}
+      />
+
+      {/* Modal de Backup & Exportação/Importação */}
+      <BackupModal
+        isOpen={isBackupOpen}
+        onClose={() => setIsBackupOpen(false)}
+        places={places}
+        onImportPlaces={importPlaces}
       />
     </div>
   );
