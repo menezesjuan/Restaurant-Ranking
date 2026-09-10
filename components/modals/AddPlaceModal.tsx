@@ -14,6 +14,9 @@ import {
   SlidersHorizontal,
   Bookmark,
   Trophy,
+  Link2,
+  CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 
 interface AddPlaceModalProps {
@@ -60,10 +63,65 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
   const [isSearchingGeocode, setIsSearchingGeocode] = useState(false);
   const [showManualCoords, setShowManualCoords] = useState(false);
 
-  // Debounced search para Nominatim
+  // Google Maps state
+  const [googleMapsUrl, setGoogleMapsUrl] = useState('');
+  const [isResolvingGoogleMaps, setIsResolvingGoogleMaps] = useState(false);
+  const [googleMapsError, setGoogleMapsError] = useState<string | null>(null);
+  const [googleMapsSuccess, setGoogleMapsSuccess] = useState<string | null>(null);
+
+  const handleResolveGoogleMaps = async (overrideUrl?: string) => {
+    const rawInput = (overrideUrl !== undefined ? overrideUrl : googleMapsUrl).trim();
+    if (!rawInput) return;
+
+    setIsResolvingGoogleMaps(true);
+    setGoogleMapsError(null);
+    setGoogleMapsSuccess(null);
+
+    try {
+      const res = await fetch('/api/places/google-maps', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input: rawInput }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.places && data.places.length > 0) {
+        const p = data.places[0];
+        if (p.name) setName(p.name);
+        if (p.address) setAddress(p.address);
+        if (p.neighborhood) setNeighborhood(p.neighborhood);
+        if (typeof p.latitude === 'number') setLatitude(p.latitude);
+        if (typeof p.longitude === 'number') setLongitude(p.longitude);
+        if (p.cuisine && !cuisine) setCuisine(p.cuisine);
+        if (p.priceRange) setPriceRange(p.priceRange);
+        if (p.notes) {
+          setNotes((prev) => (prev ? `${prev} • ${p.notes}` : p.notes));
+        }
+
+        setGoogleMapsSuccess(p.name);
+      } else {
+        setGoogleMapsError(data.error || t('addModal.googleMapsError'));
+      }
+    } catch {
+      setGoogleMapsError(t('addModal.googleMapsError'));
+    } finally {
+      setIsResolvingGoogleMaps(false);
+    }
+  };
+
+  // Debounced search para Nominatim ou auto-detect Google Maps URL
   useEffect(() => {
     if (!searchQuery.trim() || searchQuery.trim().length < 3) {
       setGeocodingResults([]);
+      return;
+    }
+
+    // Auto-detecção de link do Google Maps colado na busca comum
+    if (/((maps\.app\.goo\.gl|goo\.gl\/maps|google\.[a-z.]+\/maps))/i.test(searchQuery)) {
+      const gmapsLink = searchQuery.trim();
+      setGoogleMapsUrl(gmapsLink);
+      setSearchQuery('');
+      handleResolveGoogleMaps(gmapsLink);
       return;
     }
 
@@ -147,6 +205,16 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
     setCuisine('');
     setNotes('');
     setSelectedTags([]);
+    setGoogleMapsUrl('');
+    setGoogleMapsError(null);
+    setGoogleMapsSuccess(null);
+    onClose();
+  };
+
+  const handleClose = () => {
+    setGoogleMapsUrl('');
+    setGoogleMapsError(null);
+    setGoogleMapsSuccess(null);
     onClose();
   };
 
@@ -172,7 +240,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
           </div>
 
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-1.5 rounded-lg text-[#71716A] hover:text-[#141814] hover:bg-[#EAEAE5] transition-colors"
           >
             <X className="w-5 h-5" />
@@ -213,6 +281,74 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
                 <span>{t('details.wantToTry')}</span>
               </button>
             </div>
+          </div>
+
+          {/* Importação Rápida via Google Maps */}
+          <div className="p-3.5 rounded-xl bg-[#F4F9F5] border border-[#D3E5D8]">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-[#1C4434] text-white flex items-center justify-center text-[10px] font-bold">
+                  G
+                </span>
+                <span className="text-xs font-bold text-[#1C4434]">
+                  {t('addModal.googleMapsTitle')}
+                </span>
+              </div>
+              {googleMapsSuccess && (
+                <span className="text-[11px] text-[#1C4434] font-medium flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#1C4434]" />
+                  {t('addModal.googleMapsSuccess')}
+                </span>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder={t('addModal.googleMapsPlaceholder')}
+                  value={googleMapsUrl}
+                  onChange={(e) => {
+                    setGoogleMapsUrl(e.target.value);
+                    if (googleMapsError) setGoogleMapsError(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleResolveGoogleMaps();
+                    }
+                  }}
+                  className="w-full bg-white border border-[#BFD4C4] rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#141814] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30"
+                />
+                <Link2 className="w-3.5 h-3.5 text-[#7A8B7D] absolute left-2.5 top-2.5" />
+              </div>
+
+              <button
+                type="button"
+                disabled={isResolvingGoogleMaps || !googleMapsUrl.trim()}
+                onClick={() => handleResolveGoogleMaps()}
+                className="px-3 py-1.5 rounded-lg bg-[#1C4434] text-white text-xs font-semibold hover:bg-[#153427] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 transition-colors shrink-0"
+              >
+                {isResolvingGoogleMaps ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>{t('addModal.googleMapsLoading')}</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>{t('addModal.googleMapsButton')}</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {googleMapsError && (
+              <div className="mt-2 text-[11px] text-[#A82B2B] flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{googleMapsError}</span>
+              </div>
+            )}
           </div>
 
           {/* Nome e Bairro */}

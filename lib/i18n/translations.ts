@@ -123,6 +123,12 @@ export interface TranslationsRecord {
   'addModal.saveBeen': string;
   'addModal.saveWant': string;
   'addModal.cancelButton': string;
+  'addModal.googleMapsTitle': string;
+  'addModal.googleMapsPlaceholder': string;
+  'addModal.googleMapsButton': string;
+  'addModal.googleMapsLoading': string;
+  'addModal.googleMapsSuccess': string;
+  'addModal.googleMapsError': string;
 
   // Place Detail Modal
   'details.status': string;
@@ -304,6 +310,12 @@ export const translations: Record<Language, TranslationsRecord> = {
     'addModal.saveBeen': 'Save & Start Head-to-Head Duel',
     'addModal.saveWant': 'Save to Wishlist',
     'addModal.cancelButton': 'Cancel',
+    'addModal.googleMapsTitle': 'Import via Google Maps',
+    'addModal.googleMapsPlaceholder': 'Paste Google Maps link (maps.app.goo.gl/...) or place name',
+    'addModal.googleMapsButton': 'Import',
+    'addModal.googleMapsLoading': 'Fetching details...',
+    'addModal.googleMapsSuccess': 'Data imported from Google Maps',
+    'addModal.googleMapsError': 'Could not extract place details from link',
 
     // Place Detail Modal
     'details.status': 'Status',
@@ -481,6 +493,12 @@ export const translations: Record<Language, TranslationsRecord> = {
     'addModal.saveBeen': 'Salvar & Iniciar Duelo de Ranking',
     'addModal.saveWant': 'Salvar na Lista de Desejos',
     'addModal.cancelButton': 'Cancelar',
+    'addModal.googleMapsTitle': 'Importar via Google Maps',
+    'addModal.googleMapsPlaceholder': 'Cole o link do Google Maps (maps.app.goo.gl/...) ou nome do local',
+    'addModal.googleMapsButton': 'Importar',
+    'addModal.googleMapsLoading': 'Buscando detalhes...',
+    'addModal.googleMapsSuccess': 'Dados importados do Google Maps',
+    'addModal.googleMapsError': 'Não foi possível extrair os dados pelo link',
 
     // Place Detail Modal
     'details.status': 'Status',
