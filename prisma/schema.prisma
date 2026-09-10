@@ -1,0 +1,45 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  places    Place[]
+  createdAt DateTime @default(now())
+}
+
+enum Status {
+  BEEN
+  WANT_TO_TRY
+}
+
+model Place {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name            String
+  address         String
+  latitude        Float
+  longitude       Float
+  cuisine         String
+  priceRange      String   // $, $$, $$$, $$$$
+  status          Status   @default(BEEN)
+  
+  // Posição fracionária para o ranking (nula se estiver em WANT_TO_TRY)
+  rankingPosition Float?
+  notes           String?
+  tags            String[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId, status, rankingPosition])
+}
