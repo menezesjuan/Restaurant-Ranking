@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Place } from '@/types/place';
 import { useHeadToHeadComparison, ComparisonResult } from '@/hooks/useHeadToHeadComparison';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Trophy, Swords, MapPin, Tag, ArrowLeft, ArrowRight, CheckCircle2, Sparkles, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -19,6 +20,7 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
   onComplete,
   onCancel,
 }) => {
+  const { t } = useLanguage();
   const [completedResult, setCompletedResult] = useState<ComparisonResult | null>(null);
 
   const handleFinish = (result: ComparisonResult) => {
@@ -78,13 +80,13 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
             </div>
             <div>
               <h2 className="font-serif text-xl font-bold tracking-tight text-[#141814] flex items-center gap-2">
-                Head-to-Head Duel
+                {t('duel.title')}
                 <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-[#EFF5F1] text-[#1C4434] border border-[#D2E2D6]">
-                  Finding Exact Rank
+                  {t('duel.findingRank')}
                 </span>
               </h2>
               <p className="text-xs text-[#71716A]">
-                Which table gave you the better culinary experience?
+                {t('duel.subtitle')}
               </p>
             </div>
           </div>
@@ -100,9 +102,7 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
         {/* Barra de Progresso O(log n) */}
         <div className="px-6 py-2.5 bg-[#F4F4F0] border-b border-[#EAEAE5] flex items-center justify-between text-xs text-[#71716A]">
           <div className="flex items-center gap-2 font-medium">
-            <span>Round {currentRound}</span>
-            <span>•</span>
-            <span>Binary Search: ~{estimatedTotalSteps} questions max</span>
+            <span>{t('duel.roundProgress', { round: currentRound, total: estimatedTotalSteps })}</span>
           </div>
           <div className="w-36 bg-[#E0E0D8] rounded-full h-2 overflow-hidden">
             <div
@@ -138,7 +138,7 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
                 <div className="space-y-4">
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#1C4434] text-white flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" /> NEW ENTRY
+                      <Sparkles className="w-3 h-3" /> {t('duel.candidate')}
                     </span>
                     <span className="text-xs font-bold text-[#555A54] bg-[#F4F4F0] px-2 py-0.5 rounded border border-[#EAEAE5]">
                       {candidate.priceRange}
@@ -172,7 +172,7 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
                     className="w-full py-3.5 px-4 rounded-full font-bold text-sm bg-[#1C4434] hover:bg-[#153629] text-white shadow-md shadow-[#1C4434]/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                   >
                     <Trophy className="w-4 h-4" />
-                    <span>This was better</span>
+                    <span>{t('duel.betterThanThis')}</span>
                     <span className="text-[11px] opacity-75 font-mono ml-1 px-1.5 py-0.5 rounded bg-black/20">
                       [ ← or 1 ]
                     </span>
@@ -190,7 +190,7 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
                 <div className="space-y-4">
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#EAEAE5] text-[#434842] flex items-center gap-1">
-                      <Trophy className="w-3 h-3 text-[#C88A35]" /> CURRENT BENCHMARK
+                      <Trophy className="w-3 h-3 text-[#C88A35]" /> {t('duel.currentOpponent')}
                     </span>
                     <span className="text-xs font-bold text-[#555A54] bg-[#F4F4F0] px-2 py-0.5 rounded border border-[#EAEAE5]">
                       {currentOpponent.priceRange}
@@ -224,7 +224,7 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
                     className="w-full py-3.5 px-4 rounded-full font-bold text-sm bg-[#EFEFEA] hover:bg-[#E2E2DC] text-[#141814] shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-[#D5D5CD]"
                   >
                     <Trophy className="w-4 h-4 text-[#C88A35]" />
-                    <span>This was better</span>
+                    <span>{t('duel.betterThanThis')}</span>
                     <span className="text-[11px] opacity-75 font-mono ml-1 px-1.5 py-0.5 rounded bg-black/10">
                       [ → or 2 ]
                     </span>
@@ -238,11 +238,11 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
         {/* Footer */}
         <div className="px-6 py-3 bg-[#F4F4F0] border-t border-[#EAEAE5] text-center text-xs text-[#71716A] flex items-center justify-center gap-4">
           <span className="flex items-center gap-1">
-            <ArrowLeft className="w-3.5 h-3.5" /> Left Arrow or 1: Vote Left
+            <ArrowLeft className="w-3.5 h-3.5" /> {t('duel.keyboardCandidate')}
           </span>
           <span>•</span>
           <span className="flex items-center gap-1">
-            Right Arrow or 2: Vote Right <ArrowRight className="w-3.5 h-3.5" />
+            {t('duel.keyboardOpponent')} <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>
       </div>

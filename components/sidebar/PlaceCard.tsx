@@ -3,6 +3,7 @@
 import React from 'react';
 import { Place } from '@/types/place';
 import { useMapSelection } from '@/contexts/MapSelectionContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { formatDistance } from '@/lib/geo-distance';
 import { Swords, Trash2, Bookmark, Eye } from 'lucide-react';
 
@@ -23,6 +24,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
   onDelete,
   onInspect,
 }) => {
+  const { t } = useLanguage();
   const { selectedPlaceId, selectPlaceFromList, setHoveredPlaceId } = useMapSelection();
   const isSelected = selectedPlaceId === place.id;
   const isTopPick = rankNumber === 1;
@@ -97,7 +99,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
           <p className="text-xs text-[#71716A] dark:text-[#8E968E] truncate mt-0.5">
             {place.neighborhood || place.address.split(',')[0]}
             {typeof place.timesVisited === 'number' && place.timesVisited > 0 && (
-              <span> • been {place.timesVisited}x</span>
+              <span> • {t('placeCard.beenVisits', { count: place.timesVisited })}</span>
             )}
             {typeof place.distanceKm === 'number' && (
               <span className="opacity-80"> • {formatDistance(place.distanceKm)}</span>
@@ -112,7 +114,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
 
         {isTopPick && (
           <span className="text-[10px] font-black tracking-wider text-[#C88A35] dark:text-[#E2A64D] uppercase">
-            TOP PICK
+            {t('placeCard.topPick')}
           </span>
         )}
 
@@ -125,9 +127,9 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
             <button
               onClick={() => onPromoteToBeen(place)}
               className="px-2 py-0.5 rounded bg-[#1C4434] dark:bg-[#256149] text-white text-[10px] font-medium"
-              title="Disputar duelo de ranking"
+              title={t('placeCard.duelTooltip')}
             >
-              Duelo
+              {t('placeCard.duel')}
             </button>
           )}
 
@@ -135,7 +137,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
             <button
               onClick={() => onRerank(place)}
               className="p-1 rounded text-[#71716A] hover:text-[#1C4434] dark:hover:text-[#45B887]"
-              title="Re-ranquear restaurante"
+              title={t('placeCard.rerankTooltip')}
             >
               <Swords className="w-3 h-3" />
             </button>
@@ -145,7 +147,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
             <button
               onClick={() => onInspect(place)}
               className="p-1 rounded text-[#71716A] hover:text-[#1C4434] dark:hover:text-[#45B887]"
-              title="Detalhes e notas"
+              title={t('placeCard.detailsTooltip')}
             >
               <Eye className="w-3 h-3" />
             </button>
@@ -155,7 +157,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
             <button
               onClick={() => onDelete(place.id)}
               className="p-1 rounded text-[#71716A] hover:text-rose-500"
-              title="Remover"
+              title={t('placeCard.deleteTooltip')}
             >
               <Trash2 className="w-3 h-3" />
             </button>

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Place } from '@/types/place';
 import { useMapSelection } from '@/contexts/MapSelectionContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -17,6 +18,7 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
   rankedPlaces,
   onPlaceSelect,
 }) => {
+  const { t } = useLanguage();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
@@ -128,6 +130,10 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
 
       const marker = L.marker([place.latitude, place.longitude], { icon: customIcon });
 
+      const statusBadge = isBeen
+        ? (rankNumber ? t('map.rankedBadge', { rank: rankNumber }) : t('map.beenBadge'))
+        : t('map.wantBadge');
+
       // Conteúdo do popup claro
       const popupContent = document.createElement('div');
       popupContent.className = 'p-3 text-[#181816] min-w-[200px]';
@@ -138,7 +144,7 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
               ? 'bg-[#EFF5F1] text-[#1C4434] border border-[#D2E2D6]'
               : 'bg-[#FDF6EC] text-[#C88A35] border border-[#F3DFC1]'
           }">
-            ${isBeen ? (rankNumber ? `#${rankNumber} Ranked` : 'Been') : 'Want to try'}
+            ${statusBadge}
           </span>
           <span class="text-xs font-bold text-[#4B514A]">${place.priceRange}</span>
         </div>
@@ -166,7 +172,7 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
       const bounds = L.latLngBounds(places.map((p) => [p.latitude, p.longitude]));
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
     }
-  }, [places, rankingPositionMap, selectedPlaceId, selectPlaceFromMap, onPlaceSelect]);
+  }, [places, rankingPositionMap, selectedPlaceId, selectPlaceFromMap, onPlaceSelect, t]);
 
   // Efeito para flyTo suave
   useEffect(() => {
@@ -191,11 +197,11 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
       <div className="absolute top-4 right-4 z-10 bg-white px-4 py-2.5 rounded-xl border border-[#E4E4DC] shadow-md flex flex-col gap-1.5 text-xs select-none">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#1C4434]"></span>
-          <span className="text-[#191917] font-medium">Been • ranked</span>
+          <span className="text-[#191917] font-medium">{t('map.legendBeen')}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#C88A35]"></span>
-          <span className="text-[#191917] font-medium">Want to try</span>
+          <span className="text-[#191917] font-medium">{t('map.legendWant')}</span>
         </div>
       </div>
     </div>

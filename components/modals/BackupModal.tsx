@@ -3,6 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { Place } from '@/types/place';
 import { exportPlacesToJson, validateAndSanitizeImport } from '@/lib/export-import';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { X, Download, Upload, Check, AlertCircle, FileText } from 'lucide-react';
 
 interface BackupModalProps {
@@ -18,6 +19,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({
   places,
   onImportPlaces,
 }) => {
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(
     null
@@ -37,9 +39,9 @@ export const BackupModal: React.FC<BackupModalProps> = ({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      setFeedback({ type: 'success', message: 'Ranking exportado com sucesso!' });
+      setFeedback({ type: 'success', message: t('backup.exportedSuccess') });
     } catch (err: any) {
-      setFeedback({ type: 'error', message: `Erro ao exportar: ${err.message}` });
+      setFeedback({ type: 'error', message: err.message });
     }
   };
 
@@ -56,13 +58,13 @@ export const BackupModal: React.FC<BackupModalProps> = ({
         onImportPlaces(result.sanitizedPlaces);
         setFeedback({
           type: 'success',
-          message: `${result.sanitizedPlaces.length} restaurantes importados com sucesso!`,
+          message: t('backup.importedSuccess', { count: result.sanitizedPlaces.length }),
         });
         setTimeout(() => {
           onClose();
         }, 1500);
       } else {
-        setFeedback({ type: 'error', message: result.error || 'Falha ao validar arquivo.' });
+        setFeedback({ type: 'error', message: result.error || t('backup.validationError') });
       }
     };
     reader.readAsText(file);
@@ -79,9 +81,9 @@ export const BackupModal: React.FC<BackupModalProps> = ({
             </div>
             <div>
               <h2 className="font-serif text-lg font-bold text-[#141814] dark:text-white">
-                Backup & Share
+                {t('backup.title')}
               </h2>
-              <p className="text-xs text-[#71716A] dark:text-[#8E968E]">Export or import your tables</p>
+              <p className="text-xs text-[#71716A] dark:text-[#8E968E]">{t('backup.subtitle')}</p>
             </div>
           </div>
 
@@ -115,27 +117,27 @@ export const BackupModal: React.FC<BackupModalProps> = ({
           {/* Exportar */}
           <div className="p-4 rounded-2xl bg-[#F8F8F5] dark:bg-[#1A211D] border border-[#EAEAE5] dark:border-[#252E28] space-y-2">
             <h3 className="font-bold text-xs uppercase tracking-wider text-[#555A54] dark:text-[#A8B2A6]">
-              Export Ranking
+              {t('backup.exportSection')}
             </h3>
             <p className="text-xs text-[#71716A] dark:text-[#8E968E]">
-              Download your full London restaurant ranking and notes as a JSON file.
+              {t('backup.exportDesc')}
             </p>
             <button
               onClick={handleDownload}
               className="mt-2 w-full py-2.5 px-4 rounded-full font-bold text-xs bg-[#1C4434] hover:bg-[#153629] text-white flex items-center justify-center gap-1.5 shadow-sm transition-all"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Download JSON Backup ({places.length} places)</span>
+              <span>{t('backup.downloadButton')} ({places.length})</span>
             </button>
           </div>
 
           {/* Importar */}
           <div className="p-4 rounded-2xl bg-[#F8F8F5] dark:bg-[#1A211D] border border-[#EAEAE5] dark:border-[#252E28] space-y-2">
             <h3 className="font-bold text-xs uppercase tracking-wider text-[#555A54] dark:text-[#A8B2A6]">
-              Import Ranking
+              {t('backup.importSection')}
             </h3>
             <p className="text-xs text-[#71716A] dark:text-[#8E968E]">
-              Restore or load places from a previously saved JSON backup.
+              {t('backup.importDesc')}
             </p>
             <input
               type="file"
@@ -149,7 +151,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({
               className="mt-2 w-full py-2.5 px-4 rounded-full font-bold text-xs bg-white dark:bg-[#252E28] border border-[#D5D5CD] dark:border-[#38463D] hover:bg-[#F2F2EC] text-[#191917] dark:text-[#F0F2EE] flex items-center justify-center gap-1.5 transition-all"
             >
               <Upload className="w-3.5 h-3.5 text-[#1C4434] dark:text-[#45B887]" />
-              <span>Select JSON File to Import</span>
+              <span>{t('backup.selectFile')}</span>
             </button>
           </div>
         </div>

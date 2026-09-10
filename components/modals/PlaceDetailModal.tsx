@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Place } from '@/types/place';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   X,
   MapPin,
@@ -32,6 +33,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
   onRerank,
   onDelete,
 }) => {
+  const { t } = useLanguage();
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState(place?.notes || '');
 
@@ -64,7 +66,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
               </span>
               {isBeen && rankNumber && (
                 <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950">
-                  Rank #{rankNumber}
+                  {t('details.rankBadge', { rank: rankNumber })}
                 </span>
               )}
               <span className="text-xs font-bold text-white/90">{place.priceRange}</span>
@@ -93,16 +95,16 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3.5 rounded-2xl bg-[#F8F8F5] dark:bg-[#1B221E] border border-[#EAEAE5] dark:border-[#252E28]">
               <span className="text-[11px] text-[#71716A] dark:text-[#8E968E] font-medium block">
-                Status
+                {t('details.status')}
               </span>
               <span className="font-bold text-sm text-[#141814] dark:text-[#E8EBE6] flex items-center gap-1.5 mt-0.5">
                 {isBeen ? (
                   <>
-                    <Trophy className="w-3.5 h-3.5 text-[#1C4434] dark:text-[#45B887]" /> Been (Ranked)
+                    <Trophy className="w-3.5 h-3.5 text-[#1C4434] dark:text-[#45B887]" /> {t('details.beenRanked')}
                   </>
                 ) : (
                   <>
-                    <Bookmark className="w-3.5 h-3.5 text-[#C88A35]" /> Want to try
+                    <Bookmark className="w-3.5 h-3.5 text-[#C88A35]" /> {t('details.wantToTry')}
                   </>
                 )}
               </span>
@@ -111,7 +113,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
             <div className="p-3.5 rounded-2xl bg-[#F8F8F5] dark:bg-[#1B221E] border border-[#EAEAE5] dark:border-[#252E28] flex items-center justify-between">
               <div>
                 <span className="text-[11px] text-[#71716A] dark:text-[#8E968E] font-medium block">
-                  Times Visited
+                  {t('details.visits')}
                 </span>
                 <span className="font-bold text-sm text-[#141814] dark:text-[#E8EBE6] mt-0.5 block">
                   {place.timesVisited || (isBeen ? 1 : 0)}x
@@ -121,7 +123,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
                 <button
                   onClick={handleIncrementVisits}
                   className="px-2 py-1 rounded-lg bg-[#EAEAE5] dark:bg-[#28322C] hover:bg-[#DCDCD5] text-xs font-bold"
-                  title="Registrar mais uma visita"
+                  title={t('details.logVisitTooltip')}
                 >
                   +1
                 </button>
@@ -133,7 +135,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-[#555A54] dark:text-[#8E968E]">
-                Personal Notes & Standout Dishes
+                {t('details.notesTitle')}
               </span>
               {!isEditingNotes ? (
                 <button
@@ -143,14 +145,14 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
                   }}
                   className="text-xs text-[#1C4434] dark:text-[#45B887] hover:underline flex items-center gap-1 font-semibold"
                 >
-                  <Edit3 className="w-3 h-3" /> Edit
+                  <Edit3 className="w-3 h-3" /> {t('details.edit')}
                 </button>
               ) : (
                 <button
                   onClick={handleSaveNotes}
                   className="text-xs text-[#1C4434] dark:text-[#45B887] hover:underline flex items-center gap-1 font-bold"
                 >
-                  <Check className="w-3 h-3" /> Save
+                  <Check className="w-3 h-3" /> {t('details.saveNotes')}
                 </button>
               )}
             </div>
@@ -164,7 +166,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
               />
             ) : (
               <div className="p-3.5 rounded-2xl bg-[#F8F8F5] dark:bg-[#1B221E] border border-[#EAEAE5] dark:border-[#252E28] text-xs text-[#555A54] dark:text-[#B0B8AF] italic leading-relaxed">
-                {place.notes ? `"${place.notes}"` : 'No notes added yet for this table.'}
+                {place.notes ? `"${place.notes}"` : t('details.noNotes')}
               </div>
             )}
           </div>
@@ -173,7 +175,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
           {place.tags && place.tags.length > 0 && (
             <div className="space-y-2">
               <span className="text-xs font-bold uppercase tracking-wider text-[#555A54] dark:text-[#8E968E]">
-                Tags & Vibes
+                {t('details.tagsTitle')}
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {place.tags.map((tag) => (
@@ -199,7 +201,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
               className="flex-1 py-3 px-4 rounded-full font-bold text-xs sm:text-sm bg-[#1C4434] dark:bg-[#245742] hover:bg-[#153629] text-white shadow-sm flex items-center justify-center gap-2 transition-all"
             >
               <Swords className="w-4 h-4" />
-              <span>{isBeen ? 'Rerank Head-to-Head' : 'Rank This Table Now'}</span>
+              <span>{isBeen ? t('details.runDuel') : t('page.triedDuel')}</span>
             </button>
 
             <button
@@ -208,7 +210,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
                 onClose();
               }}
               className="p-3 rounded-full bg-[#F4F4F0] dark:bg-[#222B25] hover:bg-rose-100 hover:text-rose-700 text-[#71716A] transition-colors"
-              title="Delete Place"
+              title={t('details.deleteTooltip')}
             >
               <Trash2 className="w-4 h-4" />
             </button>

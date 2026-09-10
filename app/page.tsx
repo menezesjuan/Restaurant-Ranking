@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { PlacesProvider, usePlaces } from '@/contexts/PlacesContext';
 import { MapSelectionProvider, useMapSelection } from '@/contexts/MapSelectionContext';
+import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import { TopNavbar } from '@/components/header/TopNavbar';
 import { Sidebar } from '@/components/sidebar/Sidebar';
 import { MapView } from '@/components/map/MapView';
@@ -16,6 +17,7 @@ import { Place } from '@/types/place';
 import { List, Map as MapIcon, X, MapPin, Swords, Eye } from 'lucide-react';
 
 function TastemapApp() {
+  const { t } = useLanguage();
   const {
     places,
     rankedPlaces,
@@ -104,7 +106,7 @@ function TastemapApp() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFF5F1] dark:bg-[#202924] text-[#1C4434] dark:text-[#45B887] border border-[#D2E2D6] dark:border-[#2C3B32]">
-                    {selectedPlace.status === 'BEEN' ? 'Ranked' : 'Want to try'}
+                    {selectedPlace.status === 'BEEN' ? t('page.beenMobile') : t('page.wantMobile')}
                   </span>
                   <h4 className="font-bold text-base text-[#141814] dark:text-white mt-1">
                     {selectedPlace.name}
@@ -118,7 +120,7 @@ function TastemapApp() {
                   <button
                     onClick={() => setInspectingPlace(selectedPlace)}
                     className="p-1 rounded-lg text-[#888880] hover:text-[#1C4434]"
-                    title="View details"
+                    title={t('page.viewDetails')}
                   >
                     <Eye className="w-4 h-4" />
                   </button>
@@ -139,7 +141,7 @@ function TastemapApp() {
                   className="mt-3 w-full py-2 px-3 rounded-xl bg-[#1C4434] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm"
                 >
                   <Swords className="w-3.5 h-3.5" />
-                  <span>Experimentei! Disputar Duelo de Ranking</span>
+                  <span>{t('page.triedDuel')}</span>
                 </button>
               )}
             </div>
@@ -156,7 +158,7 @@ function TastemapApp() {
           }`}
         >
           <List className="w-5 h-5" />
-          <span>Lista</span>
+          <span>{t('page.listTab')}</span>
         </button>
 
         <button
@@ -166,7 +168,7 @@ function TastemapApp() {
           }`}
         >
           <MapIcon className="w-5 h-5" />
-          <span>Mapa</span>
+          <span>{t('page.mapTab')}</span>
         </button>
       </div>
 
@@ -236,10 +238,12 @@ function TastemapApp() {
 
 export default function Home() {
   return (
-    <PlacesProvider>
-      <MapSelectionProvider>
-        <TastemapApp />
-      </MapSelectionProvider>
-    </PlacesProvider>
+    <LanguageProvider>
+      <PlacesProvider>
+        <MapSelectionProvider>
+          <TastemapApp />
+        </MapSelectionProvider>
+      </PlacesProvider>
+    </LanguageProvider>
   );
 }

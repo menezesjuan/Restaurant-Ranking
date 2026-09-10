@@ -2,6 +2,7 @@
 
 import React, { useMemo } from 'react';
 import { usePlaces } from '@/contexts/PlacesContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { PlaceCard } from './PlaceCard';
 import { Place } from '@/types/place';
 import { Compass } from 'lucide-react';
@@ -29,6 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     startComparison,
     deletePlace,
   } = usePlaces();
+  const { t } = useLanguage();
 
   const cuisineChips = useMemo(() => {
     return ['All', 'British', 'Spanish', 'Italian', 'European', 'Indian', 'Basque', 'Punjabi', 'Taiwanese'];
@@ -52,20 +54,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex items-center gap-2 text-xs text-[#71716A] dark:text-[#8E968E]">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white dark:bg-[#1A211D] border border-[#E4E4DC] dark:border-[#2A342E] font-medium text-[#2E332E] dark:text-[#CAD1C8]">
             <span className="w-2 h-2 rounded-full bg-[#1C4434] dark:bg-[#45B887]"></span>
-            London
+            {t('sidebar.location')}
           </span>
           <span className="font-normal text-[#8A8A80] dark:text-[#7A847A]">
-            {places.length} places • {rankedPlaces.length} ranked
+            {t('sidebar.placesCount', { places: places.length, ranked: rankedPlaces.length })}
           </span>
         </div>
 
         {/* Título com Serifa Editorial */}
         <div>
           <h1 className="font-serif text-3xl font-bold tracking-tight text-[#141814] dark:text-[#F0F2EE]">
-            Your top tables
+            {t('sidebar.title')}
           </h1>
           <p className="text-xs text-[#6B7068] dark:text-[#9DA49B] mt-1 leading-relaxed max-w-sm">
-            Ranked head-to-head, so your #3 really is better than your #4 — no five-star mush.
+            {t('sidebar.subtitle')}
           </p>
         </div>
 
@@ -79,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 : 'text-[#8A8A80] dark:text-[#7A847A] hover:text-[#141814] dark:hover:text-[#F0F2EE]'
             }`}
           >
-            <span>Ranked</span>
+            <span>{t('sidebar.tabRanked')}</span>
             <span className="text-xs font-normal text-[#8A8A80] dark:text-[#7A847A]">{rankedPlaces.length}</span>
           </button>
 
@@ -91,7 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 : 'text-[#8A8A80] dark:text-[#7A847A] hover:text-[#141814] dark:hover:text-[#F0F2EE]'
             }`}
           >
-            <span>Want to try</span>
+            <span>{t('sidebar.tabWantToTry')}</span>
             <span className="text-xs font-normal text-[#8A8A80] dark:text-[#7A847A]">{wantToTryPlaces.length}</span>
           </button>
 
@@ -106,9 +108,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }))
               }
               className="text-[11px] bg-transparent text-[#71716A] dark:text-[#8E968E] border border-[#E0E0D8] dark:border-[#2C3730] rounded-lg px-2 py-0.5 focus:outline-none cursor-pointer"
-              title="Filtrar restaurantes por raio de distância"
+              title={t('sidebar.filterDistance')}
             >
-              <option value="">All London</option>
+              <option value="">{t('sidebar.allLondon')}</option>
               <option value="2">≤ 2 km</option>
               <option value="4">≤ 4 km</option>
               <option value="8">≤ 8 km</option>
@@ -118,10 +120,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               onClick={onOpenDeciderModal}
               className="text-xs text-[#1C4434] dark:text-[#45B887] hover:underline flex items-center gap-1 font-semibold"
-              title="Decisor rápido: onde comer hoje?"
+              title={t('sidebar.deciderTitle')}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>Decisor</span>
+              <span>{t('sidebar.decider')}</span>
             </button>
           </div>
         </div>
@@ -140,7 +142,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'bg-[#EFEFEA] dark:bg-[#1E2521] hover:bg-[#E5E5DE] dark:hover:bg-[#28322C] text-[#434842] dark:text-[#CAD1C8]'
                 }`}
               >
-                {c}
+                {c === 'All' ? t('sidebar.allCuisines') : c}
               </button>
             );
           })}
@@ -151,8 +153,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex-1 overflow-y-auto px-6 py-2 space-y-2.5">
         {currentList.length === 0 ? (
           <div className="py-16 text-center text-[#8A8A80] dark:text-[#7A847A] space-y-2">
-            <p className="text-sm font-semibold text-[#454A44] dark:text-[#CAD1C8]">No places found</p>
-            <p className="text-xs">Adjust your search or category filters above.</p>
+            <p className="text-sm font-semibold text-[#454A44] dark:text-[#CAD1C8]">{t('sidebar.noPlaces')}</p>
+            <p className="text-xs">{t('sidebar.noPlacesDesc')}</p>
           </div>
         ) : (
           currentList.map((place, index) => (

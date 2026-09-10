@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Moon, Sun, RotateCcw, Plus, X, Download, Sparkles } from 'lucide-react';
 import { usePlaces } from '@/contexts/PlacesContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface TopNavbarProps {
   onOpenAddModal: () => void;
@@ -16,6 +18,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenInsightsModal,
 }) => {
   const { filters, setFilters, resetToLondonMock } = usePlaces();
+  const { t } = useLanguage();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -59,7 +62,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         <div className="relative w-48 sm:w-64">
           <input
             type="text"
-            placeholder="Search your places"
+            placeholder={t('common.searchPlaceholder')}
             value={filters.searchQuery}
             onChange={(e) => setFilters((prev) => ({ ...prev, searchQuery: e.target.value }))}
             className="w-full bg-[#EFF3F0] dark:bg-[#1C231F] border-none rounded-full pl-9 pr-8 py-2 text-xs sm:text-sm text-[#191917] dark:text-[#E8EBE6] placeholder-[#76847D] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30 dark:focus:ring-[#45B887]/30 transition-all"
@@ -79,7 +82,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         <button
           onClick={onOpenInsightsModal}
           className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#1C4434] dark:text-[#45B887] transition-colors"
-          title="Taste Profile & Insights"
+          title={t('common.insights')}
         >
           <Sparkles className="w-4 h-4" />
         </button>
@@ -89,7 +92,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
           type="button"
           onClick={handleToggleTheme}
           className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#555A54] dark:text-[#B5BDB3] transition-colors cursor-pointer"
-          title={mounted && isDarkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
+          title={mounted && isDarkMode ? t('common.lightMode') : t('common.darkMode')}
         >
           {mounted && isDarkMode ? (
             <Sun className="w-4 h-4 text-amber-400" />
@@ -102,7 +105,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         <button
           onClick={onOpenBackupModal}
           className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#555A54] dark:text-[#B5BDB3] transition-colors"
-          title="Backup & Compartilhar Rankings"
+          title={t('common.backup')}
         >
           <Download className="w-4 h-4" />
         </button>
@@ -111,7 +114,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         <button
           onClick={resetToLondonMock}
           className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#555A54] dark:text-[#B5BDB3] transition-colors"
-          title="Restaurar dados de Londres"
+          title={t('common.restoreDemo')}
         >
           <RotateCcw className="w-4 h-4" />
         </button>
@@ -122,8 +125,13 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
           className="h-9 px-4 rounded-full bg-[#1C4434] dark:bg-[#245742] hover:bg-[#153629] dark:hover:bg-[#2c6950] active:scale-95 text-white font-medium text-xs sm:text-sm flex items-center gap-1.5 shadow-sm transition-all"
         >
           <Plus className="w-4 h-4" />
-          <span>Add a place</span>
+          <span>{t('common.addPlace')}</span>
         </button>
+
+        {/* Seletor de Idioma com Bandeirinha (Canto Superior Direito) */}
+        <div className="pl-1 border-l border-[#EAEAE5] dark:border-[#26312B] ml-1">
+          <LanguageSwitcher />
+        </div>
       </div>
     </header>
   );

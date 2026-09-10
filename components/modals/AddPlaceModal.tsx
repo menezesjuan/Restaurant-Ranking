@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Place, PlaceStatus } from '@/types/place';
 import { searchAddressNominatim, GeocodingResult } from '@/lib/geocoding';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   X,
   MapPin,
@@ -39,6 +40,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
   onClose,
   onSavePlace,
 }) => {
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [neighborhood, setNeighborhood] = useState('');
@@ -161,10 +163,10 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
             </div>
             <div>
               <h2 className="font-serif text-lg font-bold text-[#141814]">
-                Add a place
+                {t('addModal.title')}
               </h2>
               <p className="text-xs text-[#71716A]">
-                Rank head-to-head or add to your wishlist
+                {t('addModal.subtitle')}
               </p>
             </div>
           </div>
@@ -182,7 +184,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
           {/* Status: BEEN vs WANT_TO_TRY */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-[#555A54] mb-2">
-              Status
+              {t('details.status')}
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -195,7 +197,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
                 }`}
               >
                 <Trophy className="w-4 h-4" />
-                <span>Been (Ranked)</span>
+                <span>{t('details.beenRanked')}</span>
               </button>
 
               <button
@@ -208,7 +210,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
                 }`}
               >
                 <Bookmark className="w-4 h-4" />
-                <span>Want to try</span>
+                <span>{t('details.wantToTry')}</span>
               </button>
             </div>
           </div>
@@ -217,12 +219,12 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-[#555A54] mb-1.5">
-                Restaurant Name *
+                {t('addModal.nameLabel')} *
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Brat, Tayyabs, Padella"
+                placeholder={t('addModal.namePlaceholder')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full bg-[#FBFBF9] border border-[#E0E0D8] rounded-xl px-3.5 py-2 text-sm text-[#141814] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30"
@@ -231,11 +233,11 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-[#555A54] mb-1.5">
-                Neighborhood / Area
+                {t('addModal.neighborhoodLabel')}
               </label>
               <input
                 type="text"
-                placeholder="e.g. Shoreditch, Soho, Borough"
+                placeholder={t('addModal.neighborhoodPlaceholder')}
                 value={neighborhood}
                 onChange={(e) => setNeighborhood(e.target.value)}
                 className="w-full bg-[#FBFBF9] border border-[#E0E0D8] rounded-xl px-3.5 py-2 text-sm text-[#141814] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30"
@@ -246,10 +248,10 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
           {/* Busca de Endereço via Nominatim */}
           <div className="relative">
             <label className="block text-xs font-bold text-[#555A54] mb-1.5 flex items-center justify-between">
-              <span>Address / Location (OpenStreetMap)</span>
+              <span>{t('addModal.searchOsm')}</span>
               {isSearchingGeocode && (
                 <span className="text-[11px] text-[#1C4434] flex items-center gap-1 font-normal">
-                  <Loader2 className="w-3 h-3 animate-spin" /> Searching...
+                  <Loader2 className="w-3 h-3 animate-spin" /> {t('addModal.searching')}
                 </span>
               )}
             </label>
@@ -257,7 +259,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search address or landmark to auto-locate..."
+                placeholder={t('addModal.addressPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-[#FBFBF9] border border-[#E0E0D8] rounded-xl pl-9 pr-4 py-2 text-sm text-[#141814] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30"
@@ -299,7 +301,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
                 className="text-xs text-[#71716A] hover:text-[#1C4434] flex items-center gap-1"
               >
                 <SlidersHorizontal className="w-3 h-3" />
-                <span>{showManualCoords ? 'Hide coordinates' : 'Enter coordinates manually'}</span>
+                <span>{showManualCoords ? t('addModal.hideCoords') : t('addModal.manualCoords')}</span>
               </button>
 
               {showManualCoords && (
@@ -335,11 +337,11 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-[#555A54] mb-1.5">
-                Cuisine
+                {t('addModal.cuisineLabel')}
               </label>
               <input
                 type="text"
-                placeholder="e.g. Basque, Italian, British"
+                placeholder={t('addModal.cuisinePlaceholder')}
                 value={cuisine}
                 onChange={(e) => setCuisine(e.target.value)}
                 className="w-full bg-[#FBFBF9] border border-[#E0E0D8] rounded-xl px-3.5 py-2 text-sm text-[#141814] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30"
@@ -348,7 +350,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-[#555A54] mb-1.5">
-                Price Tier
+                {t('addModal.priceLabel')}
               </label>
               <div className="grid grid-cols-4 gap-1.5">
                 {(['£', '££', '£££', '££££'] as const).map((tier) => (
@@ -373,7 +375,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
           {status === 'BEEN' && (
             <div>
               <label className="block text-xs font-bold text-[#555A54] mb-1.5">
-                Times Visited
+                {t('addModal.visitsLabel')}
               </label>
               <input
                 type="number"
@@ -389,7 +391,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
           {/* Tags */}
           <div>
             <label className="block text-xs font-bold text-[#555A54] mb-1.5">
-              Tags & Occasions
+              {t('addModal.tagsLabel')}
             </label>
             <div className="flex flex-wrap gap-1.5 mb-2">
               {COMMON_TAGS.map((tag) => {
@@ -415,7 +417,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
             <div className="flex gap-2">
               <input
                 type="text"
-                placeholder="Add custom tag..."
+                placeholder={t('addModal.customTagPlaceholder')}
                 value={customTag}
                 onChange={(e) => setCustomTag(e.target.value)}
                 className="flex-1 bg-[#FBFBF9] border border-[#E0E0D8] rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#1C4434]"
@@ -425,7 +427,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
                 onClick={handleAddCustomTag}
                 className="px-3 py-1.5 bg-[#EAEAE5] hover:bg-[#DCDCD5] text-xs rounded-lg font-medium text-[#2E332E]"
               >
-                Add
+                {t('addModal.addTag')}
               </button>
             </div>
           </div>
@@ -433,11 +435,11 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
           {/* Notas */}
           <div>
             <label className="block text-xs font-bold text-[#555A54] mb-1.5">
-              Notes & Standout Dishes
+              {t('addModal.notesLabel')}
             </label>
             <textarea
               rows={2}
-              placeholder="e.g. Whole turbot over wood fire embers. Unmissable cheesecake..."
+              placeholder={t('addModal.notesPlaceholder')}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full bg-[#FBFBF9] border border-[#E0E0D8] rounded-xl px-3.5 py-2 text-sm text-[#141814] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30"
@@ -453,8 +455,8 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
               <Sparkles className="w-4 h-4" />
               <span>
                 {status === 'BEEN'
-                  ? 'Save & Start Head-to-Head Duel'
-                  : 'Save to Wishlist'}
+                  ? t('addModal.saveBeen')
+                  : t('addModal.saveWant')}
               </span>
             </button>
           </div>

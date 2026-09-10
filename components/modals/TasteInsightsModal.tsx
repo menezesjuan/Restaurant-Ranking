@@ -3,6 +3,7 @@
 import React from 'react';
 import { Place } from '@/types/place';
 import { calculateTasteInsights } from '@/lib/taste-insights';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   X,
   Trophy,
@@ -27,6 +28,7 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
   places,
   onSelectPlace,
 }) => {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   const insights = calculateTasteInsights(places);
@@ -42,10 +44,10 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
             </div>
             <div>
               <h2 className="font-serif text-xl font-bold text-[#141814] dark:text-[#F0F2EE]">
-                Taste Profile & Insights
+                {t('modals.insightsTitle')}
               </h2>
               <p className="text-xs text-[#71716A] dark:text-[#8E968E]">
-                Personal dining statistics and culinary breakdown
+                {t('modals.insightsSubtitle')}
               </p>
             </div>
           </div>
@@ -64,20 +66,20 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
             {/* Card 1: Total de Lugares */}
             <div className="p-3.5 rounded-2xl bg-[#F8F8F5] dark:bg-[#1A221E] border border-[#EAEAE5] dark:border-[#26312B]">
               <span className="text-[11px] font-medium text-[#71716A] dark:text-[#8E968E] block">
-                Total Places
+                {t('modals.totalPlaces')}
               </span>
               <span className="font-serif text-2xl font-bold text-[#141814] dark:text-[#F0F2EE] mt-0.5 block">
                 {insights.totalPlaces}
               </span>
               <span className="text-[10px] text-[#8A8A80] dark:text-[#7A847A]">
-                {insights.beenCount} tried • {insights.wantToTryCount} wishlist
+                {insights.beenCount} {t('modals.tried')} • {insights.wantToTryCount} {t('modals.wishlist')}
               </span>
             </div>
 
             {/* Card 2: % Visitados */}
             <div className="p-3.5 rounded-2xl bg-[#F8F8F5] dark:bg-[#1A221E] border border-[#EAEAE5] dark:border-[#26312B]">
               <span className="text-[11px] font-medium text-[#71716A] dark:text-[#8E968E] block">
-                Completion Rate
+                {t('modals.completionRate')}
               </span>
               <span className="font-serif text-2xl font-bold text-[#1C4434] dark:text-[#45B887] mt-0.5 block">
                 {insights.beenPercentage}%
@@ -93,26 +95,26 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
             {/* Card 3: Total de Visitas */}
             <div className="p-3.5 rounded-2xl bg-[#F8F8F5] dark:bg-[#1A221E] border border-[#EAEAE5] dark:border-[#26312B]">
               <span className="text-[11px] font-medium text-[#71716A] dark:text-[#8E968E] block">
-                Total Visits
+                {t('modals.totalVisits')}
               </span>
               <span className="font-serif text-2xl font-bold text-[#141814] dark:text-[#F0F2EE] mt-0.5 block">
                 {insights.totalVisits}
               </span>
               <span className="text-[10px] text-[#8A8A80] dark:text-[#7A847A]">
-                Meals logged
+                {t('modals.mealsLogged')}
               </span>
             </div>
 
             {/* Card 4: Faixa Média */}
             <div className="p-3.5 rounded-2xl bg-[#F8F8F5] dark:bg-[#1A221E] border border-[#EAEAE5] dark:border-[#26312B]">
               <span className="text-[11px] font-medium text-[#71716A] dark:text-[#8E968E] block">
-                Avg Price Tier
+                {t('modals.avgPriceTier')}
               </span>
               <span className="font-serif text-2xl font-bold text-[#C88A35] dark:text-[#E2A64D] mt-0.5 block">
                 {insights.averagePriceTier}
               </span>
               <span className="text-[10px] text-[#8A8A80] dark:text-[#7A847A]">
-                Level {insights.averagePriceLevel} of 4.0
+                {t('modals.levelOf', { level: insights.averagePriceLevel })}
               </span>
             </div>
           </div>
@@ -123,7 +125,7 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
             <div className="p-4 rounded-2xl bg-[#FBF7EE] dark:bg-[#1F1C16] border border-[#F0E6D2] dark:border-[#383120] relative overflow-hidden">
               <div className="flex items-center gap-2 text-[#C88A35] dark:text-[#E2A64D] text-xs font-bold uppercase tracking-wider mb-2">
                 <Trophy className="w-3.5 h-3.5" />
-                <span>#1 Ranked Table</span>
+                <span>{t('modals.topRankedTable')}</span>
               </div>
               {insights.topPick ? (
                 <div
@@ -156,7 +158,7 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
                   </div>
                 </div>
               ) : (
-                <p className="text-xs text-[#8A8A80]">No ranked places yet. Run a duel to crown your #1!</p>
+                <p className="text-xs text-[#8A8A80]">{t('modals.noRanked')}</p>
               )}
             </div>
 
@@ -164,7 +166,7 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
             <div className="p-4 rounded-2xl bg-[#F3F7F5] dark:bg-[#16211C] border border-[#DCE8E0] dark:border-[#24372E] relative overflow-hidden">
               <div className="flex items-center gap-2 text-[#1C4434] dark:text-[#45B887] text-xs font-bold uppercase tracking-wider mb-2">
                 <Flame className="w-3.5 h-3.5" />
-                <span>Most Visited Staple</span>
+                <span>{t('modals.mostVisitedStaple')}</span>
               </div>
               {insights.mostVisited ? (
                 <div
@@ -187,15 +189,15 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
                       {insights.mostVisited.name}
                     </h4>
                     <p className="text-xs text-[#71716A] dark:text-[#8E968E] truncate">
-                      Visited {insights.mostVisited.timesVisited} times • {insights.mostVisited.cuisine}
+                      {t('placeCard.beenVisits', { count: insights.mostVisited.timesVisited || 0 })} • {insights.mostVisited.cuisine}
                     </p>
                     <p className="text-[11px] text-[#1C4434] dark:text-[#45B887] font-medium mt-0.5">
-                      Your go-to favorite
+                      {insights.mostVisited.notes || t('modals.favoriteNotes')}
                     </p>
                   </div>
                 </div>
               ) : (
-                <p className="text-xs text-[#8A8A80]">No visit records logged yet.</p>
+                <p className="text-xs text-[#8A8A80]">{t('modals.noVisits')}</p>
               )}
             </div>
           </div>
@@ -204,7 +206,7 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#71716A] dark:text-[#8E968E]">
               <Utensils className="w-3.5 h-3.5" />
-              <span>Cuisine Preferences</span>
+              <span>{t('modals.cuisinePreferences')}</span>
             </div>
             <div className="space-y-2">
               {insights.topCuisines.slice(0, 5).map((item) => (
@@ -212,7 +214,7 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
                   <div className="flex justify-between text-xs font-medium">
                     <span className="text-[#191917] dark:text-[#F0F2EE]">{item.cuisine}</span>
                     <span className="text-[#71716A] dark:text-[#8E968E]">
-                      {item.count} places ({item.percentage}%)
+                      {item.count} ({item.percentage}%)
                     </span>
                   </div>
                   <div className="w-full bg-[#EFEFEA] dark:bg-[#202924] h-2 rounded-full overflow-hidden">
@@ -232,7 +234,7 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#71716A] dark:text-[#8E968E]">
                 <CreditCard className="w-3.5 h-3.5" />
-                <span>Price Distribution</span>
+                <span>{t('modals.priceDistribution')}</span>
               </div>
               <div className="grid grid-cols-4 gap-2 text-center">
                 {(['£', '££', '£££', '££££'] as const).map((tier) => {
@@ -263,7 +265,7 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#71716A] dark:text-[#8E968E]">
                 <MapPin className="w-3.5 h-3.5" />
-                <span>Top Neighborhoods</span>
+                <span>{t('modals.topNeighborhoods')}</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {insights.topNeighborhoods.slice(0, 6).map((nh) => (
@@ -285,13 +287,13 @@ export const TasteInsightsModal: React.FC<TasteInsightsModalProps> = ({
         {/* Rodapé */}
         <div className="px-6 py-4 border-t border-[#EAEAE5] dark:border-[#222924] bg-[#FBFBFA] dark:bg-[#18201C] flex items-center justify-between shrink-0">
           <p className="text-xs text-[#8A8A80] dark:text-[#7A847A]">
-            Metrics automatically updated as you rank and log visits.
+            Tastemap • {t('sidebar.location')}
           </p>
           <button
             onClick={onClose}
             className="px-5 py-2 rounded-full bg-[#1C4434] dark:bg-[#256149] hover:bg-[#153629] dark:hover:bg-[#2e7457] text-white text-xs font-semibold shadow-sm transition-all"
           >
-            Done
+            {t('common.done')}
           </button>
         </div>
       </div>
