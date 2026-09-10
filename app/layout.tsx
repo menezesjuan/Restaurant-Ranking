@@ -43,7 +43,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="h-full w-full overflow-hidden font-sans">
+      <body className="h-full w-full overflow-hidden font-sans" suppressHydrationWarning>
         {children}
       </body>
     </html>

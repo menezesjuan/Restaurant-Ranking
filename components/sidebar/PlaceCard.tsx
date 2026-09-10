@@ -4,7 +4,7 @@ import React from 'react';
 import { Place } from '@/types/place';
 import { useMapSelection } from '@/contexts/MapSelectionContext';
 import { formatDistance } from '@/lib/geo-distance';
-import { Swords, Trash2, Bookmark } from 'lucide-react';
+import { Swords, Trash2, Bookmark, Eye } from 'lucide-react';
 
 interface PlaceCardProps {
   place: Place;
@@ -12,6 +12,7 @@ interface PlaceCardProps {
   onPromoteToBeen?: (place: Place) => void;
   onRerank?: (place: Place) => void;
   onDelete?: (id: string) => void;
+  onInspect?: (place: Place) => void;
 }
 
 export const PlaceCard: React.FC<PlaceCardProps> = ({
@@ -20,6 +21,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
   onPromoteToBeen,
   onRerank,
   onDelete,
+  onInspect,
 }) => {
   const { selectedPlaceId, selectPlaceFromList, setHoveredPlaceId } = useMapSelection();
   const isSelected = selectedPlaceId === place.id;
@@ -136,6 +138,16 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
               title="Re-ranquear restaurante"
             >
               <Swords className="w-3 h-3" />
+            </button>
+          )}
+
+          {onInspect && (
+            <button
+              onClick={() => onInspect(place)}
+              className="p-1 rounded text-[#71716A] hover:text-[#1C4434] dark:hover:text-[#45B887]"
+              title="Detalhes e notas"
+            >
+              <Eye className="w-3 h-3" />
             </button>
           )}
 

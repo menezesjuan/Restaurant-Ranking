@@ -1,15 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Moon, Sun, RotateCcw, Plus, X, Download } from 'lucide-react';
+import { Search, Moon, Sun, RotateCcw, Plus, X, Download, Sparkles } from 'lucide-react';
 import { usePlaces } from '@/contexts/PlacesContext';
 
 interface TopNavbarProps {
   onOpenAddModal: () => void;
   onOpenBackupModal: () => void;
+  onOpenInsightsModal: () => void;
 }
 
-export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal, onOpenBackupModal }) => {
+export const TopNavbar: React.FC<TopNavbarProps> = ({
+  onOpenAddModal,
+  onOpenBackupModal,
+  onOpenInsightsModal,
+}) => {
   const { filters, setFilters, resetToLondonMock } = usePlaces();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -69,6 +74,15 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal, onOpenBack
             </button>
           )}
         </div>
+
+        {/* Botão Taste Profile & Insights */}
+        <button
+          onClick={onOpenInsightsModal}
+          className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#1C4434] dark:text-[#45B887] transition-colors"
+          title="Taste Profile & Insights"
+        >
+          <Sparkles className="w-4 h-4" />
+        </button>
 
         {/* Botão Tema Dark / Light Toggle */}
         <button

@@ -5,6 +5,7 @@ console.log('========================================\n');
 import './ranking-calc.test';
 import './export-import.test';
 import './geo-distance.test';
+import './taste-insights.test';
 
 console.log('\n========================================');
 console.log('✅ TODOS OS TESTES PASSARAM COM SUCESSO!');

@@ -9,10 +9,12 @@ import { Compass } from 'lucide-react';
 interface SidebarProps {
   onOpenAddModal: () => void;
   onOpenDeciderModal: () => void;
+  onInspectPlace?: (place: Place) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   onOpenDeciderModal,
+  onInspectPlace,
 }) => {
   const {
     places,
@@ -161,6 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onPromoteToBeen={handlePromoteToBeen}
               onRerank={handleRerank}
               onDelete={deletePlace}
+              onInspect={onInspectPlace}
             />
           ))
         )}

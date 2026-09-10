@@ -11,6 +11,7 @@ import { DeciderModal } from '@/components/modals/DeciderModal';
 import { AddPlaceModal } from '@/components/modals/AddPlaceModal';
 import { PlaceDetailModal } from '@/components/modals/PlaceDetailModal';
 import { BackupModal } from '@/components/modals/BackupModal';
+import { TasteInsightsModal } from '@/components/modals/TasteInsightsModal';
 import { Place } from '@/types/place';
 import { List, Map as MapIcon, X, MapPin, Swords, Eye } from 'lucide-react';
 
@@ -37,6 +38,7 @@ function TastemapApp() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeciderOpen, setIsDeciderOpen] = useState(false);
   const [isBackupOpen, setIsBackupOpen] = useState(false);
+  const [isInsightsOpen, setIsInsightsOpen] = useState(false);
   const [inspectingPlace, setInspectingPlace] = useState<Place | null>(null);
 
   // Restaurante selecionado para o bottom sheet mobile ou detalhes
@@ -64,6 +66,7 @@ function TastemapApp() {
       <TopNavbar
         onOpenAddModal={() => setIsAddModalOpen(true)}
         onOpenBackupModal={() => setIsBackupOpen(true)}
+        onOpenInsightsModal={() => setIsInsightsOpen(true)}
       />
 
       {/* Split-Screen Principal */}
@@ -77,6 +80,7 @@ function TastemapApp() {
           <Sidebar
             onOpenAddModal={() => setIsAddModalOpen(true)}
             onOpenDeciderModal={() => setIsDeciderOpen(true)}
+            onInspectPlace={(place) => setInspectingPlace(place)}
           />
         </div>
 
@@ -215,6 +219,16 @@ function TastemapApp() {
         onClose={() => setIsBackupOpen(false)}
         places={places}
         onImportPlaces={importPlaces}
+      />
+
+      {/* Modal de Perfil Gastronômico & Estatísticas */}
+      <TasteInsightsModal
+        isOpen={isInsightsOpen}
+        onClose={() => setIsInsightsOpen(false)}
+        places={places}
+        onSelectPlace={(place) => {
+          selectPlaceFromList(place);
+        }}
       />
     </div>
   );
