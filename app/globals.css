@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #fafaf8;
   --foreground: #191917;
+}
+
+.dark {
+  --background: #0d110f;
+  --foreground: #f0f2ee;
 }
 
 body {
@@ -10,13 +17,14 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .font-serif {
   font-family: var(--font-serif), Georgia, serif;
 }
 
-/* Scrollbar sutil e minimalista */
+/* Scrollbar sutil */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -31,8 +39,16 @@ body {
   border-radius: 9999px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #2a342e;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #bcbcb2;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #39463e;
 }
 
 /* Leaflet container */
@@ -43,7 +59,11 @@ body {
   font-family: inherit;
 }
 
-/* Custom styling para os popups do Leaflet no tema claro */
+.dark .leaflet-container {
+  background-color: #0d110f;
+}
+
+/* Custom styling para os popups do Leaflet no tema claro e escuro */
 .leaflet-popup-content-wrapper {
   background: #ffffff !important;
   color: #191917 !important;
@@ -53,8 +73,19 @@ body {
   padding: 0 !important;
 }
 
+.dark .leaflet-popup-content-wrapper {
+  background: #161c19 !important;
+  color: #f0f2ee !important;
+  border: 1px solid #28342c !important;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.4) !important;
+}
+
 .leaflet-popup-tip {
   background: #ffffff !important;
+}
+
+.dark .leaflet-popup-tip {
+  background: #161c19 !important;
 }
 
 .leaflet-popup-content {
@@ -72,7 +103,10 @@ body {
   right: 10px !important;
 }
 
-/* Custom pin style */
+.dark .leaflet-container a.leaflet-popup-close-button {
+  color: #a0a89f !important;
+}
+
 .custom-pin-marker {
   background: transparent;
   border: none;

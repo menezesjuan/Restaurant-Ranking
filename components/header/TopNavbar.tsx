@@ -11,36 +11,36 @@ interface TopNavbarProps {
 export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal }) => {
   const { filters, setFilters, resetToLondonMock } = usePlaces();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Checa preferência salva no localStorage ou do sistema
-    const savedTheme = localStorage.getItem('tastemap_theme');
-    if (savedTheme === 'dark') {
-      setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove('dark');
-    }
+    setMounted(true);
+    const hasDark = document.documentElement.classList.contains('dark');
+    setIsDarkMode(hasDark);
   }, []);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode((prev) => {
-      const next = !prev;
-      if (next) {
-        document.documentElement.classList.add('dark');
+  const handleToggleTheme = () => {
+    const nextTheme = !isDarkMode;
+    setIsDarkMode(nextTheme);
+
+    if (nextTheme) {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+      try {
         localStorage.setItem('tastemap_theme', 'dark');
-      } else {
-        document.documentElement.classList.remove('dark');
+      } catch {}
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+      try {
         localStorage.setItem('tastemap_theme', 'light');
-      }
-      return next;
-    });
+      } catch {}
+    }
   };
 
   return (
     <header className="w-full h-16 bg-white dark:bg-[#121614] border-b border-[#EAEAE5] dark:border-[#222924] px-6 flex items-center justify-between z-30 shrink-0 select-none transition-colors">
-      {/* Logo com serifa idêntico à imagem */}
+      {/* Logo com serifa */}
       <div className="flex items-center">
         <span className="font-serif text-2xl font-bold tracking-tight text-[#141814] dark:text-[#F0F2EE]">
           Tastemap<span className="text-[#1C4434] dark:text-[#45B887]">.</span>
@@ -49,14 +49,14 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal }) => {
 
       {/* Ações da direita */}
       <div className="flex items-center gap-3">
-        {/* Campo de Busca em Pílula */}
+        {/* Campo de Busca */}
         <div className="relative w-56 sm:w-72">
           <input
             type="text"
             placeholder="Search your places"
             value={filters.searchQuery}
             onChange={(e) => setFilters((prev) => ({ ...prev, searchQuery: e.target.value }))}
-            className="w-full bg-[#EFF3F0] dark:bg-[#1C231F] border-none rounded-full pl-9 pr-8 py-2 text-xs sm:text-sm text-[#191917] dark:text-[#E8EBE6] placeholder-[#76847D] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30 transition-all"
+            className="w-full bg-[#EFF3F0] dark:bg-[#1C231F] border-none rounded-full pl-9 pr-8 py-2 text-xs sm:text-sm text-[#191917] dark:text-[#E8EBE6] placeholder-[#76847D] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30 dark:focus:ring-[#45B887]/30 transition-all"
           />
           <Search className="w-4 h-4 text-[#76847D] absolute left-3 top-2.5" />
           {filters.searchQuery && (
@@ -71,14 +71,19 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal }) => {
 
         {/* Botão Tema Dark / Light Toggle */}
         <button
-          onClick={toggleDarkMode}
-          className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#555A54] dark:text-[#B5BDb3] transition-colors"
-          title={isDarkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
+          type="button"
+          onClick={handleToggleTheme}
+          className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#555A54] dark:text-[#B5BDB3] transition-colors cursor-pointer"
+          title={mounted && isDarkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
         >
-          {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+          {mounted && isDarkMode ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4" />
+          )}
         </button>
 
-        {/* Botão Resetar Lugares para Mock Original */}
+        {/* Botão Resetar Lugares */}
         <button
           onClick={resetToLondonMock}
           className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#555A54] dark:text-[#B5BDB3] transition-colors"
