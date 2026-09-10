@@ -4,7 +4,7 @@ import { searchOrResolvePlace } from '@/lib/google-maps/resolver';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const queryOrUrl = body?.queryOrUrl;
+    const queryOrUrl = body?.queryOrUrl || body?.input || body?.url || body?.query;
 
     if (!queryOrUrl || typeof queryOrUrl !== 'string' || queryOrUrl.trim().length === 0) {
       return NextResponse.json(

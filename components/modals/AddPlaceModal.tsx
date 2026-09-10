@@ -81,7 +81,7 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
       const res = await fetch('/api/places/google-maps', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input: rawInput }),
+        body: JSON.stringify({ queryOrUrl: rawInput, input: rawInput }),
       });
 
       const data = await res.json();

@@ -57,13 +57,30 @@ export function extractCoordinatesFromUrl(urlStr: string): Coordinates | null {
 }
 
 /**
- * Extrai o nome do restaurante a partir do segmento /maps/place/<nome>/ da URL.
+ * Extrai o nome do restaurante a partir de /maps/place/, /maps/search/ ou query params da URL.
  */
 export function extractPlaceNameFromUrl(urlStr: string): string | null {
   if (!urlStr || typeof urlStr !== 'string') return null;
 
-  // Regex linear sem backtracking
-  const match = urlStr.match(/\/maps\/place\/([^/@?]+)/);
+  // 1. Padrão canônico de lugar: /maps/place/<nome>/
+  let match = urlStr.match(/\/maps\/place\/([^/@?]+)/);
+
+  // 2. Padrão de busca: /maps/search/<nome>/
+  if (!match || !match[1]) {
+    match = urlStr.match(/\/maps\/search\/([^/@?]+)/);
+  }
+
+  // 3. Padrão de query param: ?q=<termo> ou &query=<termo>
+  if (!match || !match[1]) {
+    const qMatch = urlStr.match(/[?&](?:q|query)=([^&#]+)/);
+    if (qMatch && qMatch[1]) {
+      // Ignora se o valor do param for estritamente coordenadas (ex: -23.55,-46.63)
+      if (!/^-?\d+(?:\.\d+)?,?-?\d*(?:\.\d+)?$/.test(qMatch[1])) {
+        match = qMatch;
+      }
+    }
+  }
+
   if (!match || !match[1]) return null;
 
   let rawName = match[1];
@@ -76,7 +93,10 @@ export function extractPlaceNameFromUrl(urlStr: string): string | null {
   } catch {}
 
   const clean = sanitizeText(rawName);
-  return clean || null;
+  if (!clean || clean.toLowerCase() === 'maps' || clean.toLowerCase() === 'google maps') {
+    return null;
+  }
+  return clean;
 }
 
 /**
@@ -107,8 +127,11 @@ export function parseGoogleMapsHtmlMetadata(html: string): ParsedPlaceMetadata {
         result.neighborhood = addrParts[0].trim();
       }
     } else if (rawTitle.includes(' - Google Maps')) {
-      result.name = rawTitle.replace(' - Google Maps', '').trim();
-    } else {
+      const cleanTitle = rawTitle.replace(' - Google Maps', '').trim();
+      if (cleanTitle && cleanTitle.toLowerCase() !== 'google maps') {
+        result.name = cleanTitle;
+      }
+    } else if (rawTitle && rawTitle.toLowerCase() !== 'google maps') {
       result.name = rawTitle;
     }
   }

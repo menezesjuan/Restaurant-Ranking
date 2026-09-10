@@ -8,7 +8,7 @@ import {
   extractPlaceNameFromUrl,
   parseGoogleMapsHtmlMetadata,
 } from './parser';
-import { searchAddressNominatim } from '../geocoding';
+import { searchAddressNominatim, reverseGeocodeNominatim } from '../geocoding';
 
 export interface GoogleMapsExtractedPlace {
   name: string;
@@ -72,13 +72,10 @@ export async function resolveGoogleMapsUrl(urlStr: string): Promise<GoogleMapsEx
     const limitedHtml = htmlText.slice(0, 500_000);
     const metadata = parseGoogleMapsHtmlMetadata(limitedHtml);
 
-    const name = metadata.name || placeName || 'London Restaurant';
-    let address = metadata.address || '';
-    let neighborhood = metadata.neighborhood || '';
-
     // Se coordenadas ainda não foram encontradas na URL canônica, tenta extrair do HTML
     if (!coords) {
-      const htmlCoordMatch = limitedHtml.match(/content="https:\/\/maps\.google\.com\/maps\/api\/staticmap\?[^"]*center=(-?\d+\.\d+)%2C(-?\d+\.\d+)/) ||
+      const htmlCoordMatch =
+        limitedHtml.match(/content="https:\/\/maps\.google\.com\/maps\/api\/staticmap\?[^"]*center=(-?\d+\.\d+)%2C(-?\d+\.\d+)/) ||
         limitedHtml.match(/\/@(-?\d+\.\d+),(-?\d+\.\d+)/);
       if (htmlCoordMatch) {
         coords = {
@@ -88,9 +85,28 @@ export async function resolveGoogleMapsUrl(urlStr: string): Promise<GoogleMapsEx
       }
     }
 
-    // Se ainda não temos coordenadas, busca pelo nome no Nominatim para garantir o pin no mapa
-    if (!coords) {
-      const fallbackSearch = await searchAddressNominatim(`${name} London`);
+    let name = metadata.name || placeName || '';
+    let address = metadata.address || '';
+    let neighborhood = metadata.neighborhood || '';
+
+    // Se a URL não tem restaurante, nem nome, nem coordenadas (ex: google.com/maps)
+    if (!name && !coords) {
+      throw new Error('A URL informada aponta para a página inicial do Google Maps sem um restaurante selecionado.');
+    }
+
+    // Se temos coordenadas mas ainda falta endereço ou nome, faz reverse geocoding
+    if (coords && (!address || !name)) {
+      const rev = await reverseGeocodeNominatim(coords.latitude, coords.longitude);
+      if (rev) {
+        if (!address) address = rev.displayName;
+        if (!neighborhood && rev.neighborhood) neighborhood = rev.neighborhood;
+        if (!name) name = rev.neighborhood || rev.displayName.split(',')[0] || 'Local Selecionado';
+      }
+    }
+
+    // Se ainda não temos coordenadas mas temos nome, busca pelo nome no Nominatim
+    if (!coords && name) {
+      const fallbackSearch = await searchAddressNominatim(name);
       if (fallbackSearch.length > 0) {
         coords = {
           latitude: parseFloat(fallbackSearch[0].lat),
@@ -100,13 +116,20 @@ export async function resolveGoogleMapsUrl(urlStr: string): Promise<GoogleMapsEx
           address = fallbackSearch[0].display_name;
         }
       } else {
-        // Fallback para o centro de Londres
         coords = { latitude: 51.5074, longitude: -0.1278 };
       }
     }
 
+    if (!coords) {
+      coords = { latitude: 51.5074, longitude: -0.1278 };
+    }
+
+    if (!name) {
+      name = address ? address.split(',')[0].trim() : 'Local Selecionado';
+    }
+
     if (!address) {
-      address = `${name}, London`;
+      address = name;
     }
 
     if (!neighborhood && address) {

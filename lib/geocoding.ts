@@ -37,3 +37,42 @@ export async function searchAddressNominatim(query: string): Promise<GeocodingRe
     return [];
   }
 }
+
+/**
+ * Realiza geocodificação reversa para obter endereço a partir de coordenadas.
+ */
+export async function reverseGeocodeNominatim(
+  lat: number,
+  lon: number
+): Promise<{ displayName: string; neighborhood?: string } | null> {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`;
+    const response = await fetch(url, {
+      headers: {
+        'Accept-Language': 'en,pt',
+        'User-Agent': 'Tastemap-Restaurant-Ranking-App/1.0',
+      },
+    });
+
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (data && data.display_name) {
+      const addr = data.address || {};
+      const neighborhood =
+        addr.suburb ||
+        addr.neighbourhood ||
+        addr.quarter ||
+        addr.city_district ||
+        addr.city ||
+        addr.town;
+
+      return {
+        displayName: data.display_name,
+        neighborhood,
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}

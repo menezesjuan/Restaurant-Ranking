@@ -152,7 +152,26 @@ assert(
   extractPlaceNameFromUrl('https://www.google.com/maps/place/Brat?entry=ttu') === 'Brat',
   'Query string deve ser descartada do nome do lugar'
 );
-console.log('✔ Teste 4: Nomes simples, compostos e com caracteres especiais extraídos com perfeição');
+
+// URL de busca com filtros (/maps/search/...)
+assert(
+  extractPlaceNameFromUrl('https://www.google.com/maps/search/Tayyabs+London/@51.5186,-0.0628,15z') === 'Tayyabs London',
+  'Nome deve ser extraído de URLs do tipo /maps/search/'
+);
+
+// URL com query param ?q=Nome+Do+Lugar
+assert(
+  extractPlaceNameFromUrl('https://maps.google.com/?q=Dishoom+Covent+Garden') === 'Dishoom Covent Garden',
+  'Nome deve ser extraído de query param ?q='
+);
+
+// URL genérica do Google Maps sem estabelecimento
+assert(
+  extractPlaceNameFromUrl('https://www.google.com/maps') === null,
+  'URL genérica do Google Maps deve retornar null'
+);
+
+console.log('✔ Teste 4: Nomes simples, compostos, buscas com filtros e URLs genéricas validadas com perfeição');
 
 
 // -------------------------------------------------------------
