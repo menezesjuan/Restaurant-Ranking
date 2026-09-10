@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo, useCall
 import { Place, PlaceFilterState, PlaceStatus } from '@/types/place';
 import { PlacesStorageService } from '@/lib/storage/places-storage';
 import { needsRebalancing, rebalancePositions } from '@/lib/ranking-calc';
+import { calculateHaversineDistanceKm } from '@/lib/geo-distance';
 
 interface PlacesContextValue {
   places: Place[];
@@ -111,6 +112,27 @@ export const PlacesProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (filters.selectedTags.length > 0) {
           const hasAllTags = filters.selectedTags.every((t) => place.tags.includes(t));
           if (!hasAllTags) return false;
+        }
+
+        // Raio Geográfico máximo (km)
+        if (typeof filters.maxDistanceKm === 'number' && filters.maxDistanceKm > 0) {
+          const dist = calculateHaversineDistanceKm(
+            51.5135,
+            -0.128,
+            place.latitude,
+            place.longitude
+          );
+          place.distanceKm = dist;
+          if (dist > filters.maxDistanceKm) {
+            return false;
+          }
+        } else {
+          place.distanceKm = calculateHaversineDistanceKm(
+            51.5135,
+            -0.128,
+            place.latitude,
+            place.longitude
+          );
         }
 
         return true;

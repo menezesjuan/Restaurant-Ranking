@@ -17,6 +17,7 @@ export interface Place {
   timesVisited?: number;
   avatarText?: string;
   avatarBg?: string;
+  distanceKm?: number;
   createdAt?: string | Date;
   updatedAt?: string | Date;
 }
@@ -26,4 +27,5 @@ export interface PlaceFilterState {
   cuisine: string;
   priceRange: string;
   selectedTags: string[];
+  maxDistanceKm?: number | null;
 }

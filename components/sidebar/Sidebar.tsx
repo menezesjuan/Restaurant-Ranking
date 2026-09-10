@@ -93,15 +93,35 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span className="text-xs font-normal text-[#8A8A80] dark:text-[#7A847A]">{wantToTryPlaces.length}</span>
           </button>
 
-          {/* Botão Decisor rápido */}
-          <button
-            onClick={onOpenDeciderModal}
-            className="ml-auto mb-2 text-xs text-[#1C4434] dark:text-[#45B887] hover:underline flex items-center gap-1 font-semibold"
-            title="Decisor rápido: onde comer hoje?"
-          >
-            <Compass className="w-3.5 h-3.5" />
-            <span>Decisor Rápido</span>
-          </button>
+          {/* Seletor de Raio de Distância */}
+          <div className="ml-auto mb-2 flex items-center gap-2">
+            <select
+              value={filters.maxDistanceKm ?? ''}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  maxDistanceKm: e.target.value ? parseFloat(e.target.value) : null,
+                }))
+              }
+              className="text-[11px] bg-transparent text-[#71716A] dark:text-[#8E968E] border border-[#E0E0D8] dark:border-[#2C3730] rounded-lg px-2 py-0.5 focus:outline-none cursor-pointer"
+              title="Filtrar restaurantes por raio de distância"
+            >
+              <option value="">All London</option>
+              <option value="2">≤ 2 km</option>
+              <option value="4">≤ 4 km</option>
+              <option value="8">≤ 8 km</option>
+            </select>
+
+            {/* Botão Decisor rápido */}
+            <button
+              onClick={onOpenDeciderModal}
+              className="text-xs text-[#1C4434] dark:text-[#45B887] hover:underline flex items-center gap-1 font-semibold"
+              title="Decisor rápido: onde comer hoje?"
+            >
+              <Compass className="w-3.5 h-3.5" />
+              <span>Decisor</span>
+            </button>
+          </div>
         </div>
 
         {/* Chips de Culinária */}

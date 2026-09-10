@@ -3,6 +3,7 @@
 import React from 'react';
 import { Place } from '@/types/place';
 import { useMapSelection } from '@/contexts/MapSelectionContext';
+import { formatDistance } from '@/lib/geo-distance';
 import { Swords, Trash2, Bookmark } from 'lucide-react';
 
 interface PlaceCardProps {
@@ -95,6 +96,9 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
             {place.neighborhood || place.address.split(',')[0]}
             {typeof place.timesVisited === 'number' && place.timesVisited > 0 && (
               <span> • been {place.timesVisited}x</span>
+            )}
+            {typeof place.distanceKm === 'number' && (
+              <span className="opacity-80"> • {formatDistance(place.distanceKm)}</span>
             )}
           </p>
         </div>
