@@ -7,6 +7,7 @@ import './export-import.test';
 import './geo-distance.test';
 import './taste-insights.test';
 import './i18n.test';
+import './google-maps-parser.test';
 
 console.log('\n========================================');
 console.log('✅ TODOS OS TESTES PASSARAM COM SUCESSO!');
