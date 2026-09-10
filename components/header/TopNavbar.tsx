@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { Search, Moon, RotateCcw, Plus, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Moon, Sun, RotateCcw, Plus, X } from 'lucide-react';
 import { usePlaces } from '@/contexts/PlacesContext';
 
 interface TopNavbarProps {
@@ -10,13 +10,40 @@ interface TopNavbarProps {
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal }) => {
   const { filters, setFilters, resetToLondonMock } = usePlaces();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Checa preferência salva no localStorage ou do sistema
+    const savedTheme = localStorage.getItem('tastemap_theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('tastemap_theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('tastemap_theme', 'light');
+      }
+      return next;
+    });
+  };
 
   return (
-    <header className="w-full h-16 bg-white border-b border-[#EAEAE5] px-6 flex items-center justify-between z-30 shrink-0 select-none">
+    <header className="w-full h-16 bg-white dark:bg-[#121614] border-b border-[#EAEAE5] dark:border-[#222924] px-6 flex items-center justify-between z-30 shrink-0 select-none transition-colors">
       {/* Logo com serifa idêntico à imagem */}
       <div className="flex items-center">
-        <span className="font-serif text-2xl font-bold tracking-tight text-[#141814]">
-          Tastemap<span className="text-[#1C4434]">.</span>
+        <span className="font-serif text-2xl font-bold tracking-tight text-[#141814] dark:text-[#F0F2EE]">
+          Tastemap<span className="text-[#1C4434] dark:text-[#45B887]">.</span>
         </span>
       </div>
 
@@ -29,31 +56,32 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal }) => {
             placeholder="Search your places"
             value={filters.searchQuery}
             onChange={(e) => setFilters((prev) => ({ ...prev, searchQuery: e.target.value }))}
-            className="w-full bg-[#EFF3F0] border-none rounded-full pl-9 pr-8 py-2 text-xs sm:text-sm text-[#191917] placeholder-[#76847D] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30 transition-all"
+            className="w-full bg-[#EFF3F0] dark:bg-[#1C231F] border-none rounded-full pl-9 pr-8 py-2 text-xs sm:text-sm text-[#191917] dark:text-[#E8EBE6] placeholder-[#76847D] focus:outline-none focus:ring-2 focus:ring-[#1C4434]/30 transition-all"
           />
           <Search className="w-4 h-4 text-[#76847D] absolute left-3 top-2.5" />
           {filters.searchQuery && (
             <button
               onClick={() => setFilters((prev) => ({ ...prev, searchQuery: '' }))}
-              className="absolute right-2.5 top-2.5 text-[#76847D] hover:text-[#191917]"
+              className="absolute right-2.5 top-2.5 text-[#76847D] hover:text-[#191917] dark:hover:text-[#F0F2EE]"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
 
-        {/* Botão Tema / Lua */}
+        {/* Botão Tema Dark / Light Toggle */}
         <button
-          className="w-9 h-9 rounded-full bg-[#F4F4F0] hover:bg-[#EAEAE5] flex items-center justify-center text-[#555A54] transition-colors"
-          title="Modo Escuro / Claro"
+          onClick={toggleDarkMode}
+          className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#555A54] dark:text-[#B5BDb3] transition-colors"
+          title={isDarkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
         >
-          <Moon className="w-4 h-4" />
+          {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
         </button>
 
-        {/* Botão Resetar Lugares */}
+        {/* Botão Resetar Lugares para Mock Original */}
         <button
           onClick={resetToLondonMock}
-          className="w-9 h-9 rounded-full bg-[#F4F4F0] hover:bg-[#EAEAE5] flex items-center justify-center text-[#555A54] transition-colors"
+          className="w-9 h-9 rounded-full bg-[#F4F4F0] dark:bg-[#1E2521] hover:bg-[#EAEAE5] dark:hover:bg-[#28322C] flex items-center justify-center text-[#555A54] dark:text-[#B5BDB3] transition-colors"
           title="Restaurar dados de Londres"
         >
           <RotateCcw className="w-4 h-4" />
@@ -62,7 +90,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({ onOpenAddModal }) => {
         {/* Botão + Add a place */}
         <button
           onClick={onOpenAddModal}
-          className="h-9 px-4 rounded-full bg-[#1C4434] hover:bg-[#153629] active:scale-95 text-white font-medium text-xs sm:text-sm flex items-center gap-1.5 shadow-sm transition-all"
+          className="h-9 px-4 rounded-full bg-[#1C4434] dark:bg-[#245742] hover:bg-[#153629] dark:hover:bg-[#2c6950] active:scale-95 text-white font-medium text-xs sm:text-sm flex items-center gap-1.5 shadow-sm transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>Add a place</span>
